@@ -1,0 +1,242 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<style>
+			html,body{
+				width: 100%;
+				height: 100%;
+			}
+			#bcid{  
+	            width: 100%;  
+	            position: absolute; 
+	            top: 44px;
+	            bottom: 44px; 
+	            background: #000000;  
+       		} 
+	        .fbt{  
+	            color: #0E76E1;  
+	            width: 50%;  
+	            background-color: #ffffff;  
+	            float: left;   
+	            line-height: 44px;  
+	            text-align: center;  
+	        }
+			.scan-tip {
+				display: none;
+				position: absolute;
+				top: 25%;
+				margin-left: 10%;
+				width: 80%;
+				height: 50px;
+				line-height: 50px;
+				font-size: 16px;
+				text-align: center;
+				background: #fff;
+				color: #333;
+				z-index: 999;
+				border-radius: 6px;
+			}
+			.mui-bar.mui-bar-footer{
+				-webkit-box-shadow: none;
+				box-shadow: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav" style="background-color: #ffffff;">  
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color:#333;"></a>  
+		    <h1 class="mui-title" >物品二维码扫描</h1>  
+		</header>  
+		<div class="scan-tip">请查看是否开启相机权限</div>
+		<div id="bcid"></div>
+		<div class="mui-bar mui-bar-footer" style="padding: 0px;z-index: 9999;">  
+	        <div id="turnTheLight" class="fbt pic">开启闪光灯</div>  
+	        <div class="fbt mui-action-back">取　 消</div>  
+	    </div>  
+		<script src="../js/mui.min.js"></script>
+		<script type="text/javascript">
+			(function($, doc){
+				$.init();
+				var scan;
+				var _self;
+				
+				var localstorage = window.localStorage; 
+				var scan_ip = localstorage.getItem('ip');
+				
+				var token;
+				var filter = [0,1,2];
+				var num = 0;
+				var network_flag = true;    // true为 网络正常
+ 				var scan_style = {
+					frameColor: "#3388ff",
+					scanbarColor: "#3388ff",
+					background: ""
+				}
+				var pic = doc.getElementsByClassName('pic')[0];
+				var bcid = document.getElementById('bcid');
+				var h = document.documentElement.clientHeight || document.body.clientHeight;
+				
+				function oPage(url,data) {
+					var d = data || {};
+					$.openWindow({
+						id: url,
+						url: url,
+						styles: {
+							popGesture: 'close'
+						},
+						show: {
+							aniShow: 'slide-in-right'
+						},
+						waiting: {
+							autoShow: false
+						},
+						extras: d
+					});
+				}
+				function onmarked( type, result ) {  
+					if ( !network_flag ) {    
+						plus.nativeUI.alert('网络不给力，请稍后再试',function(){
+							scan.start();
+						});
+						return;
+					}
+                    token = localstorage.getItem('token');
+                    console.log( result +','+token);  
+                    mui.ajax( scan_ip+'/api/v1/hdw/cabinet/scan_code',{
+						data:{
+							token: token,
+							code: result
+						},
+						dataType:'json',
+						type:'post',
+						timeout:10000,              
+						success:function(data){
+							console.log(JSON.stringify(data));
+							if (data.code == 0) {
+								if ( data.data.num == 0 ) {   //  预约过期，已支付  没有可用电池
+									oPage('open-box-result.html');
+									return;
+								}
+								plus.nativeUI.alert('当前可用电池数量：'+data.data.num, function() {
+									var flag = 0;   // 0 初始 1未预约  2已支付  3 未支付
+									mui.each( data.data.list, function (index, item) {   // 遍历 状态 = 1 未付款， =2 已付款，=3 放入旧电
+										if ( item.orderStatus == 2) {   // 判断有付款的订单，直接扫码
+											flag = 2;
+											oPage('open-box-1.html',{
+												orderId: item.id,
+												code: result,
+												itemName: '换电'
+											});
+										} 
+									});
+									if ( flag != 2 ) {			// 未付款
+										mui.each( data.data.list, function (index, item) {  // 遍历状态 == 1 
+											if ( item.orderStatus == 1) {   // 判断有付款的订单，直接扫码
+												flag = 3;
+												plus.nativeUI.confirm('是否立即支付充电？',function(e) {
+													if ( e.index == 0 ) {
+														console.log('状态1 有预约订单 进入');
+														oPage('payment.html',{
+															orderId: item.id,   		// 选择的第一个订单id
+															price: data.data.price, 	
+															total: data.data.price,
+															amount: 1,
+															cabinetId: result,			// 扫描的二维码  也是桩点id
+															itemName: '换电',
+															charge: 'true'
+														})
+													} else {
+														plus.webview.close(_self);
+													}
+												}, '提示',['确定','取消']);
+											} 
+										});
+										if ( flag != 3 && flag !=2 ) {     //  没有预约  没有支付
+											plus.nativeUI.confirm('是否立即支付充电？',function(e) {
+												if ( e.index == 0 ) {
+//													console.log('没有订单进入');
+													oPage('payment.html',{
+														orderId: 0,
+														price: data.data.price,
+														total: data.data.price,
+														amount: 1,
+														cabinetId: result,
+														itemName: '换电',
+														charge: 'true'
+													})
+												} else {
+													plus.webview.close(_self);
+												}
+											}, '提示',['确定','取消']);
+										}
+									}
+								});
+							} else if ( data.code == 2 ){
+								plus.nativeUI.alert(data.message, function() {
+									scan.start();
+								});
+							} else {
+								plus.nativeUI.alert('扫码失败', function() {
+									scan.start();
+								});
+							}
+						},
+						error:function(xhr,type,errorThrown){
+							//异常处理；
+							console.log(type);
+						}
+					});
+        		};    
+            	var flag = false;  
+	           	pic.addEventListener('tap',function(){
+	               if(flag == false){  
+	                  scan.setFlash(true);  
+	                  flag = true;  
+	                  pic.innerHTML = '关闭闪光灯';
+	               }else{  
+	                 scan.setFlash(false);  
+	                 flag = false;  
+	                 pic.innerHTML = '开启闪光灯';
+	               }  
+	            });  
+				function onerror(e){  
+                    plus.nativeUI.alert('开启扫描失败,请稍后再试');
+                }
+				function wainshow() {
+				    if (plus.networkinfo.getCurrentType() == plus.networkinfo.CONNECTION_NONE) {
+				        network_flag = false;
+				    } else {
+				        network_flag = true;
+				    }
+				}
+				$.plusReady(function() {
+					_self = plus.webview.currentWebview();
+					plus.nativeUI.showWaiting('正在加载...', {
+						loading: {
+							display: 'inline'
+						}
+					});
+					wainshow();
+					setTimeout(function(){
+						scan = new plus.barcode.Barcode('bcid',filter,scan_style);
+						scan.onmarked = onmarked;
+						scan.onerror = onerror;
+						scan.start();
+						plus.nativeUI.closeWaiting();
+						setTimeout(function(){
+							mui('.scan-tip')[0].style.display = 'block';
+						}, 1500);
+					}, 100);
+				});
+				
+			}(mui, document));
+		</script>
+	</body>
+
+</html>

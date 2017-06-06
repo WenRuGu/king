@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/login.css"/>
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css"/>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <h1 class="mui-title">登录</h1>
+		</header>
+		<div class="head">
+			<img id="user-pic" src="../img/logo.png"/>
+		</div>
+		<div class="mui-input-group">
+		    <div class="mui-input-row">
+		        <label>账号</label>
+		        <input type="number" class="user-id" placeholder="请输入手机号">
+		        <span class="sel-span mui-icon mui-icon-arrowdown"></span>
+		    </div>
+		    <div class="mui-input-row">
+		        <label>密码</label>
+		        <input type="password" class="mui-input-password" placeholder="请输入密码">
+		    </div>
+			    <ul class="hide-id">
+			    </ul>
+		</div>
+		<button type="button" id="login" class="mui-btn mui-btn-primary" disabled="disabled">登录</button>
+
+		<a class="forgot-psw" href="javascript:;">忘记密码？</a>
+		<button type="button" class="mui-btn mui-btn-blue mui-btn-outlined">立即注册</button>
+
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script src="../js/md5.js"></script>
+		<script src="../js/sha1.js"></script>
+		<script src="../js/login.js"></script>
+	</body>
+</html>

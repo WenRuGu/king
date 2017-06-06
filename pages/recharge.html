@@ -1,0 +1,392 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css"/>
+		<style type="text/css">
+			html,body{
+				width: 100%;
+			}
+			body{
+				background: #f5f5f5;
+			}
+			a{
+				color: #333;
+			}
+			.mui-btn,button{
+				-webkit-transition: none;
+				transition: none;
+			}
+			.mui-bar{
+				background: #fff;
+			}
+			.money{
+				width: 100%;
+				height: 1.1rem;
+				padding: 0 0.3rem;
+				background: #fff;
+			}
+			.money span.mui-pull-left{
+				display: block;
+				width: 30%;
+				height: 1.1rem;
+				line-height: 1.1rem;
+				font-size: 0.3rem;
+			}
+			.money .money-ipt{
+				width: 70%;
+				height: 1.1rem;
+				font-size: 0.3rem;
+				border:none;
+				margin:0;
+				padding: 0;
+			}
+			.recharge{
+				width: 90%;
+				height: 0.9rem;
+				margin-left: 5%;
+				font-size: 0.32rem;
+				color: #fff;
+				margin-top: 1rem;
+				border:none;
+			}
+			.pay-p{
+				clear: both;
+				height: 0.6rem;
+				line-height: 0.6rem;
+				font-size: 0.28rem;
+				padding-left: 0.3rem;	
+				margin-bottom: 0;
+			}
+			.payBox{
+				height: 1.2rem;
+				line-height: 1.2rem;
+				font-size: 0.3rem;
+			}
+			.payBox span{
+				float: right;
+				margin-right: 5%;
+				line-height: 1.1rem;
+				color: #888;
+			}
+			.check{
+				color: #3ccb3e !important;
+			}
+			.mui-table-view:before{
+				background-color:#fff;
+			}
+			.mui-table-view:after {
+				background-color: #fff;
+			}
+			.mui-table-view li:nth-child(1) div{
+				padding-left: 1.2rem;
+				background: url(../img/weixin.png) no-repeat 0.4rem;
+				-webkit-background-size: 0.6rem 0.6rem;
+				background-size: 0.6rem 0.6rem;			
+			}
+			
+			.mui-table-view li:nth-child(2) div{
+				padding-left: 1.2rem;
+				background: url(../img/zhifu.png) no-repeat 0.4rem;
+				-webkit-background-size: 0.6rem 0.6rem;
+				background-size: 0.6rem 0.6rem;	
+			}
+			.mui-table-view-cell{
+				padding: 0;
+			}
+			.mui-scroll-wrapper{
+				top:44px;
+			}
+			.favourable{
+				width: 100%;
+				overflow: hidden;
+				margin-top: 0.2rem;
+				margin-bottom: 0.3rem;
+			}
+			.favourableBox{
+				float: left;
+				width: 28%;
+				/*height: 0.9rem;*/
+				overflow: hidden;
+				margin-left: 4%;
+				background: #fff;
+				margin-bottom: 0.14rem;
+				-webkit-border-radius: 4px;
+				border-radius: 4px;
+			}
+			.blue{
+				background: #38f;
+			}
+			.icon-checkbox1{
+				font-size: 15px!important;
+			}
+			.favourableBox p:nth-child(1) {
+				font-size: 0.36rem;
+				height: 0.5rem;
+				line-height: 0.6rem;
+				color: #333;
+				text-align: center;
+				margin-bottom: 0;
+			}
+			.favourableBox p:nth-child(2) {
+				font-size: 0.28rem;
+				/*height: 0.4rem;*/
+				overflow: hidden;
+				line-height: 0.4rem;
+				text-align: center;
+				margin-bottom: 0;
+				color:#888;
+			} 
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">充值</h1>
+		</header>
+		<div class="mui-scroll-wrapper">
+			<div class="mui-scroll">
+				<div class="favourable">
+				</div>
+				<div class="money">
+					<span class="mui-pull-left">
+						金额（元）
+					</span>
+					<input type="text" class="mui-pull-right money-ipt" value="" placeholder="请输入金额"/>
+				</div>
+				<p class="pay-p">支付方式</p>
+				<ul class="mui-table-view pay-mo">
+				    <li class="mui-table-view-cell">
+				    	<div  class="payBox wx">
+				    		微信支付
+				    		<span class="mui-icon iconfont check icon-checkbox"></span>
+						</div>
+				    </li>
+				    <li class="mui-table-view-cell">
+				    	<div class="payBox alipay">
+				    		支付宝钱包
+				    		<span class="mui-icon iconfont icon-checkbox1"></span>
+						</div>
+				    </li>
+				</ul>
+				<button type="button" class="recharge mui-btn mui-btn-primary" disabled="disabled">充值</button>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			var localstorage = window.localStorage;  
+			var paynum = 1;
+			var weixin = document.getElementById('weixin');
+		 	var zhifu = document.getElementById('zhifu');
+		 	var recharge = document.getElementsByClassName('recharge')[0];
+		 	var money = document.getElementsByClassName('money-ipt')[0];
+		 	var money_box = document.getElementsByClassName('money')[0];
+		 	var token;
+		 	var self;
+		 	var rech_ip = localstorage.getItem('ip');
+		 	var num;			//	点击的数额
+		 	mui('.mui-scroll-wrapper').scroll({
+					deceleration: 0.0005 
+				});
+			mui.plusReady(function() {
+			 	token = localstorage.getItem('token');
+			 	self = plus.webview.currentWebview();
+			 	
+			 	function charge_yh() {        // 充值优惠的信息
+			 		token = localstorage.getItem('token');
+				 	mui.get( rech_ip+'/api/v1/basic/customer_deposit_gift/list',{token: token},function(data){
+							console.log(JSON.stringify(data));
+							if ( data.code == 0 ) {
+								var div;
+								var fragment = document.createDocumentFragment();
+								mui.each( data.data, function( index, item ) {
+									div = document.createElement('div');
+									item.money = item.money/100;
+									item.gift = item.gift/100;
+									div.innerHTML = '<div class="favourableBox">'
+										+ '<p class="chargeMoney">'+ item.money +'</p>'
+										+ '<p>送'+ item.gift +'</p></div>';
+									fragment.appendChild(div);
+								});
+								mui('.favourable')[0].appendChild(fragment);
+							}
+						},'json'
+					);
+			 	}
+			 	charge_yh();
+			 	
+			 	mui('.favourable').on('tap','.favourableBox', function() {
+			 		recharge.disabled = false;
+			 		money.value = '';
+			 		money.blur();
+			 		if ( this.classList.contains('blue') ) {
+			 			this.classList.remove('blue');
+				 		this.children[0].style.color = '#333';
+				 		this.children[1].style.color = '#888';
+				 		recharge.setAttribute('disabled','disabled');
+//				 		money.disabled = false;
+			 		} else {
+				 		mui('.favourableBox').each(function() {
+					 		this.classList.remove('blue');
+					 		this.children[0].style.color = '#333';
+					 		this.children[1].style.color = '#888';
+				 		})
+			 			this.classList.add('blue');
+			 			this.children[0].style.color = '#fff';
+			 			this.children[1].style.color = '#fff';
+//			 			money.setAttribute('disabled','disabled');
+			 		}
+			 	});
+			 	var pays={};
+				// 获取支付通道
+				plus.payment.getChannels(function(channels){
+					for(var i in channels){
+						var channel=channels[i];
+						console.log(channel.id + ',' + channel.description+','+channel.serviceReady);
+						if(channel.id=='qhpay'||channel.id=='qihoo'){	// 过滤掉不支持的支付通道：暂不支持360相关支付
+							continue;
+						}
+						pays[channel.id]=channel;
+						checkServices(channel);
+					}
+				},function(e){
+					plus.nativeUI.toast('获取支付通道失败：'+e.message);
+				});
+				// 检测是否安装支付服务
+				function checkServices(pc){
+					if(!pc.serviceReady){
+						var txt=null;
+						switch(pc.id){
+							case 'alipay':
+							txt='检测到系统未安装“支付宝快捷支付服务”，无法完成支付操作，是否立即安装？';
+							break; 
+							default:
+							txt='系统未安装“'+pc.description+'”服务，无法完成支付，是否立即安装？';
+							break;
+						}
+						plus.nativeUI.confirm(txt, function(e){
+							if(e.index==0){
+								pc.installService();
+							}
+						}, pc.description);
+					}
+				}
+				mui('.wx')[0].addEventListener('tap', function() {
+					this.querySelector('span').className = 'mui-icon iconfont check icon-checkbox';
+					mui('.alipay')[0].querySelector('span').className = 'mui-icon iconfont icon-checkbox1';
+					paynum = 1;
+				});
+				mui('.alipay')[0].addEventListener('tap', function() {
+					this.querySelector('span').className = 'mui-icon iconfont check icon-checkbox';
+					mui('.wx')[0].querySelector('span').className = 'mui-icon iconfont icon-checkbox1';
+					paynum = 2;
+				});
+				
+				function pay(path, money,id) {  // 支付方式  金额
+					token = localstorage.getItem('token');
+					plus.nativeUI.showWaiting();
+					console.log(token+','+path+','+money);
+					mui.ajax( rech_ip+path,{
+						data:{
+							token: token,
+							money: money * 100
+						},
+						dataType:'json',
+						type:'post',
+						timeout:10000,              
+						success:function(data){
+							console.log(JSON.stringify(data));
+							plus.nativeUI.closeWaiting();
+							if ( data.code == 0 ) {
+								plus.payment.request(pays[id],data.data.alipayParam,function(result){
+									console.log(JSON.stringify(result));
+									mui.fire(plus.webview.getLaunchWebview(),'update-balance', {
+										balance:true
+									})
+									plus.nativeUI.alert('支付成功!',function(){
+										plus.webview.close(self);
+									},'','确定');
+								},function(e){
+									console.log(e.code+','+e.message);
+//									plus.nativeUI.alert('提醒', null, '支付失败：'+e.code);
+								});
+							} else {
+								plus.nativeUI.alert('支付失败',function() {},'','确定');
+							}
+						},
+						error:function(xhr,type,errorThrown){
+							//异常处理；
+//							console.log(type);
+							plus.nativeUI.closeWaiting();
+							plus.nativeUI.alert('获取订单信息失败！');
+						}
+					});
+				}
+				function clearNoNum(obj){ 
+				    obj = obj.replace(/[^\d.]/g,"");  //清除“数字”和“.”以外的字符  
+				    obj = obj.replace(/\.{2,}/g,"."); //只保留第一个. 清除多余的  
+				    obj = obj.replace(".","$#$").replace(/\./g,"").replace("$#$","."); 
+				    obj = obj.replace(/^(\-)*(\d+)\.(\d\d).*$/,'$1$2.$3');//只能输入两个小数  
+				    if(obj.indexOf(".")< 0 && obj !=""){//以上已经过滤，此处控制的是如果没有小数点，首位不能为类似于 01、02的金额 
+				        obj= parseFloat(obj); 
+				    } 
+				    return obj;
+				} 
+				money.addEventListener('input', function() {
+					num = document.querySelector('.blue');
+					if ( num == null ) {
+						if ( money.value == '' ) {
+							recharge.setAttribute('disabled','disabled');
+						} else {
+							money.value = clearNoNum(money.value);
+//							console.log(money.value);
+							if ( money.value == '' ) {
+								recharge.setAttribute('disabled','disabled');
+								return;
+							}
+							recharge.disabled = false;
+						}
+					} else {
+						if ( money.value != '') {
+							mui('.favourableBox').each(function() {
+						 		this.classList.remove('blue');
+						 		this.children[0].style.color = '#333';
+						 		this.children[1].style.color = '#888';
+					 		})
+						}
+					}
+				});
+				recharge.addEventListener('tap', function() {
+					var charge_money;
+					if ( money.value == '' ) {
+						num = document.querySelector('.blue');
+						console.log(JSON.stringify(num.innerHTML));
+						if ( num == null ) {
+							recharge.setAttribute('disabled','disabled');
+							plus.nativeUI.toast('请选择或输入金额');
+							return;
+						} else {
+							charge_money = num.querySelector('.chargeMoney').innerHTML;
+						}
+					} else {
+						charge_money = money.value;
+					}
+					
+					if ( paynum == 1 ) {
+						pay('/api/v1/basic/customer_deposit_order/create_weixin', charge_money, 'wxpay');
+					} else if ( paynum == 2) {
+						pay('/api/v1/basic/customer_deposit_order/create_alipay', charge_money, 'alipay');
+					}
+				})
+			})
+		</script>
+	</body>
+
+</html>

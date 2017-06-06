@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="../css/style.css"/>
+		<style type="text/css">
+			html,body{
+				width:100%;
+				height:100%;
+			}
+			.mui-bar{
+				background: #fff;
+			}
+			a{
+				color: #333;
+			}
+			.mui-bar .mui-title{
+				left: 60px;
+				right: 60px;
+			}
+			.keep{
+				display: block;
+				width: 60px;
+				height: 44px;
+				text-align: center;
+				line-height: 44px;
+				font-size: 16px;
+			}
+			.mui-scroll-wrapper{
+				top:44px;
+			}
+			.add-ul{
+				width: 100%;
+				height: auto;
+				list-style: none;
+			}
+			li{
+				width: 100%;
+				min-height: 1.6rem;
+				background: #fff;
+			}
+			li p:nth-child(1){
+				font-size: 0.28rem;
+				height: 0.7rem;
+			}
+			li p:nth-child(1) span{
+				height: 0.7rem;
+				line-height: 0.7rem;
+				color: #333;
+			}
+			.address{
+				line-height: 0.4rem;
+				font-size: 0.28rem;
+				color: #333;
+				margin-bottom: 0.2rem;
+				overflow: hidden;
+			 	text-overflow: ellipsis;
+			 	display: -webkit-box;
+			 	-webkit-line-clamp: 2;
+			 	-webkit-box-orient: vertical;
+			}
+			.address span:nth-child(1){
+				color: #38f;
+			}
+			.mui-table-view-cell{
+				
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">地址簿</h1>
+		    <a class="mui-pull-right keep">管理</a>
+		</header>
+			<div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<ul class="add-ul">
+						<!--<li class="mui-table-view-cell">
+							<p>
+								<span class="name mui-pull-left">按实际打款</span>
+								<span class="mobile mui-pull-right">123456678910</span>
+							</p>
+							<p class="address">
+								<span>[默认地址]</span>
+								<span data-code='110000'>背景</span>
+								<span data-code='113400'>南京</span>
+								<span data-code='110340'>手机客服</span>
+								<span class="street">卡萨丁苦辣都快来卡速度很快卡拉卡拉SD卡四大皆asdad空垃圾艾克上单盛开的健康</span>
+							</p>
+						</li>-->
+					</ul>
+				</div>
+			</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			(function($,doc){
+				$('.mui-scroll-wrapper').scroll({
+					deceleration: 0.0005 
+				});
+				
+				var administration = doc.getElementsByClassName('keep')[0];
+				var add_ul = doc.getElementsByClassName('add-ul')[0];
+				var token;
+				
+				var localstorage = window.localStorage;  
+				var add_ip = localstorage.getItem('ip');
+				$.plusReady(function() {
+					var self = plus.webview.currentWebview();
+					function update() {
+						token = localstorage.getItem('token');
+						mui.post(add_ip+'/api/v1/basic/address_book/list',{
+								token: token
+							},function(data){
+//								console.log(JSON.stringify(data));
+								if ( data.code == 0 ) {
+									var fragment = document.createDocumentFragment();
+									var li;
+									add_ul.innerHTML = '';
+									$.each( data.data, function( index, item) {
+										console.log(JSON.stringify(item));
+										li = document.createElement('li');
+										li.className = 'mui-table-view-cell';
+										var default_txt = '';
+										if ( item.defaultFlag == 1 ) {
+											default_txt = '[默认地址]';
+										}
+										li.innerHTML = '<p>'
+											+ '<span class="name mui-pull-left">'+ item.contact +'</span>'
+											+ '<span class="mobile mui-pull-right">'+ item.tel +'</span>'
+											+ '</p>'
+											+ '<p class="address"><span>'+ default_txt +'</span>'
+											+ '<span data-code="'+ item.province +'">'+item.provinceName +'</span>' 
+											+ '<span data-code="'+ item.city +'">'+item.cityName +'</span>'
+											+ '<span data-code="'+ item.district +'">'+item.districtName +'</span>'
+											+ '<span class="street">'+ item.street+'</p>';
+										fragment.appendChild(li);
+									});
+									add_ul.appendChild(fragment);
+								}
+								
+							},'json'
+						);
+					}
+					
+					update();
+					window.addEventListener('update-mall-address',function(event) {
+						update();
+					});
+					$('.add-ul').on('tap','li', function() {    // 传递选择地址
+						var contact = this.querySelector('.name').innerHTML;
+						var tel = this.querySelector('.mobile').innerHTML;
+						
+						var province = this.querySelector('.address span:nth-child(2)');
+						var city = this.querySelector('.address span:nth-child(3)');
+						var district = this.querySelector('.address span:nth-child(4)');
+						var street = this.querySelector('.address span:nth-child(5)');
+						
+						var provinceName = province.getAttribute('data-code');
+						var cityName = city.getAttribute('data-code');
+						var districtName = district.getAttribute('data-code');
+						
+						var str = province.innerHTML+city.innerHTML+district.innerHTML;
+						var street_txt = street.innerHTML;
+						$.fire(plus.webview.getWebviewById('mall-order.html'),'sel-address', {
+							contact: contact,
+							tel: tel,
+							street_txt: street.innerHTML,
+							str: str,
+							provinceName:provinceName,
+							cityName:cityName,
+							districtName:districtName
+						});
+						plus.webview.close(self);
+					})
+					administration.addEventListener('tap',function() {    // 打开地址簿
+						$.openWindow({
+							id: 'address.html',
+							url: 'address.html',
+							show: {
+								aniShow: 'slide-in-right',
+								duration: 200
+							},
+							styles: {
+								popGesture: 'close'
+							},
+							waiting: {
+								autoShow: false
+							}
+						})
+					})
+				})
+			}(mui,document))
+		</script>
+	</body>
+
+</html>

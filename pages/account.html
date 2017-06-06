@@ -1,0 +1,148 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			html,body{
+				width: 100%;
+				height: 100%;
+			}
+			body{
+				background: #f5f5f5;
+			}
+			a{
+				color: #333;
+			}
+			.mui-bar{
+				background: #fff;
+			}
+			.acc-p{
+				float: left;
+				margin-top: 1.3rem;
+				font-size: 0.3rem;
+				color: #333;
+				text-indent: 0.3rem;
+			}
+			.acc-ul{
+				list-style: none;
+				padding: 0;
+				margin:0;
+				clear: both;
+				border-top: 1px solid #ccc;
+				background: #fff;
+			}
+			.acc-ul li{
+				padding-left: 0.3rem;
+				height:1.26rem;
+				border-bottom: 1px solid #ccc;
+			}
+			.cen-p{
+				text-align: center;
+				font-size: 0.32rem;
+				color: #333;
+				line-height: 1.26rem;
+			}
+			.acc-ul li img{
+				width: 0.9rem;
+				height: 0.9rem;
+				border-radius: 50%;
+				margin-top: 0.18rem;
+			}
+			.acc-ul li p{
+				text-indent: 0.5rem;
+				height: 1.26rem;
+				line-height: 1.26rem;
+				color: #333;
+				font-size: 0.30rem;
+				margin-bottom: 0;
+			}
+			.no-acc{
+				text-align: center;
+				font-size: 0.3rem;
+				color: #38f;
+				margin-top: 0.6rem;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">忘记密码</h1>
+		</header>
+		<p class="acc-p">请选择你要找回的账户</p>
+		<ul class="acc-ul">
+		</ul>
+		
+		<p class="no-acc">以上不是我要找回的账户</p>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			var localstorage = window.localStorage; 
+			var all_ul = document.getElementsByClassName('acc-ul')[0];
+			mui.plusReady(function() {
+				var allId = localstorage.getItem('allId');
+				all_ul.innerHTML = '';
+				if ( allId != '' ) {											// 下拉显示 曾经登录的账号
+					var fragment = document.createDocumentFragment(); 
+					var arr = allId.split(';');
+					for ( var i = 0; i < arr.length - 1; i++) {
+						var arr_1 = arr[i].split(',');
+						var li = document.createElement('li');
+						li.innerHTML = '<a href="javascript:;"><img src="'+ arr_1[1]+'" class="mui-pull-left"/>'
+							+ '<p class="mui-pull-left">'+ arr_1[0] +'</p></a>';
+						fragment.appendChild(li);
+					}
+					all_ul.appendChild(fragment);
+				} else {
+					var p = document.createElement('li');
+					p.className = 'cen-p';
+					p.innerHTML = '最近没有登录过的账户';
+					all_ul.appendChild(p);
+				}
+			})
+			mui('.acc-ul').on('tap', 'li', function() {
+				var userid = this.querySelector('p');
+				if ( userid != null ) {
+					mui.openWindow({
+						id: 'account-1.html',
+						url: 'account-1.html',
+						show: {
+							aniShow: 'slide-in-right'
+						},
+						styles: {
+							popGesture: 'close'
+						},
+						waiting: {
+							autoShow: false
+						},
+						extras: {
+							phone_num: userid.innerHTML
+						}
+					});
+				}
+			});
+			mui('.no-acc')[0].addEventListener('tap', function() {
+				mui.openWindow({
+					id: 'account-2.html',
+					url: 'account-2.html',
+					show: {
+						aniShow: 'slide-in-right'
+					},
+					styles: {
+						popGesture: 'close'
+					},
+					waiting: {
+						autoShow: false
+					}
+				});
+			});
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<style>
+			body{
+				background: #fff;
+			}
+			.mui-bar{
+				background: #fff;
+			}
+			.result-pic{
+				position: relative;
+				width: 1.6rem;
+				height: 1.6rem;
+				left: 50%;
+				margin-left: -0.8rem;
+				margin-top: 1.6rem;
+			}
+			p{
+				width: 100%;
+				text-align: center;
+				margin-bottom: 0;
+			}
+			.result{
+				clear: both;
+				height: 0.7rem;
+				line-height: 0.7rem;
+				color: #333;
+				margin-top: 0.3rem;
+				font-size: 0.32rem;
+			}
+			.back-time{
+				height: 0.6rem;
+				line-height: 0.6rem;
+				color: #888;
+				font-size: 0.3rem;
+			}
+			.back-home{
+				position: absolute;
+				display: block;
+				width: 1.4rem;
+				height: 0.8rem;
+				line-height: 0.8rem;
+				color: #38f;
+				margin-top: 0.8rem;
+				left:50%;
+				margin-left: -0.7rem;
+				font-size: 0.3rem;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <h1 class="mui-title">扫码结果</h1>
+		</header>
+		<img class="result-pic" src="../img/result-tan.png"/>
+		<p class="result">暂无可用电池</p>
+		<p class="back-time">系统将在 <span class="time">5</span> 秒内返回首页</p>
+		<span class="back-home">立即返回</span>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			mui.plusReady(function() {
+				var self = plus.webview.currentWebview();
+				var count = 5;
+				var time = document.getElementsByClassName('time')[0];
+				
+				function back() {
+					plus.webview.close('mall-order.html');
+					plus.webview.close('mall-details.html');
+					plus.webview.close('payment.html');
+					plus.webview.close('pages/tab-webview-subpage-scan.html');
+					plus.webview.close(self);
+				}
+				function timing(){
+					time.innerHTML = count;
+					count--;
+					if (count <= 0 ) {
+						clearInterval(timer);
+						count = 5;
+						back();
+					}
+				}
+				timing();
+				var timer = setInterval(function() {
+					timing();
+				}, 1000);
+				
+				mui('.back-home')[0].addEventListener('tap', function() {
+					back();
+				})
+				
+			});
+		</script>
+	</body>
+
+</html>

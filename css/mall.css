@@ -1,0 +1,276 @@
+body{
+	background: #F5F5F5;
+}
+ *{ margin: 0; padding: 0}
+ul,li{ list-style: none}
+
+.mui-content{
+	background: #F5F5F5;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+.loading{
+	position: absolute;
+	width: 100%;
+	height: 3rem;
+	line-height: 3rem;
+	text-align: center;
+	font-size: 0.4rem;
+	background: rgba(245,245,245,1);
+}
+.mui-btn-outlined{
+	margin-top: 1rem;
+	border: none;
+	color:#333;
+}
+.mui-slider.mui-fullscreen{
+	top: 1rem;
+}
+.slider-item{
+	float: left;
+	position: relative;
+    height: 100%;
+    vertical-align: top;
+    white-space: normal;
+}
+.slider-group{
+	overflow: hidden;
+	height: 100%;
+	-webkit-transform: translate3d(0,0,0);
+	transform: translate3d(0,0,0);
+}
+.mui-scroll{
+	min-height: 90%;
+}
+
+.wrap {
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+}
+.nav {
+	height: 1rem;
+	line-height: 1rem;
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	background: #fff;
+	z-index: 9999;
+	-webkit-box-shadow: 0 1px 4px #ccc;
+    box-shadow: 0 1px 4px #ccc;
+}
+.nav-list {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: flex;
+	width: 100%;
+	height: 100%;
+	list-style: none;
+	padding:0;
+	margin: 0;
+}
+.nav-list>li {
+	flex: 1;
+	height: 100%;
+	font-size: 0.3rem;
+	color: #888;
+	text-align: center;
+}
+.list-blue{
+	color: #38f !important;
+}
+.nav .nav-active {
+	position: absolute;
+	bottom: 0;
+	height: 2px;
+	width: 25%;
+	-webkit-transform: translate3d(0,0,0);
+	transform: translate3d(0,0,0);
+	border-bottom: 2px solid #38f;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	-webkit-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
+}
+
+.foods{
+	width: 100%;
+	overflow: auto;
+	padding: 0;
+	margin: 0;
+}
+
+.foods li{
+	list-style: none;
+	width: 49%;
+	height: auto;
+	float: left;
+	margin-bottom: 0.1rem;
+	background-color: #fff;
+	display: block;
+}
+
+.foods li img{
+	width: 100%;
+	height: 2.8rem;
+}
+
+.foods li p{
+	text-indent: 0.15rem;
+	height: 0.4rem;
+	margin: 0.05rem;
+}
+
+.foods li .mall-title{
+	font-size: 0.28rem;
+	color: #3e3e3e;
+}
+
+.foods li .mall-price-new{
+	font-size: 0.34rem;
+	color: #f60;
+	margin-bottom: 0.1rem;
+}
+.foods li .mall-price-new .mall-price-old{
+	margin-left: 0.1rem;
+	color: #888;
+	font-size: 0.22rem;
+	text-decoration: line-through;
+}
+
+
+.foods li:nth-child(even) {
+	margin-left: 0.15rem;
+}
+
+
+
+.mui-bar~.mui-content .mui-fullscreen {
+	top: 44px;
+	height: auto;
+}
+.mui-pull-top-tips {
+	position: absolute;
+	top: -20px;
+	left: 50%;
+	margin-left: -20px;
+	width: 40px;
+	height: 40px;
+	-webkit-border-radius: 100%;
+	border-radius: 100%;
+	z-index: 1005;
+}
+.mui-bar~.mui-pull-top-tips {
+	top: 24px;
+}
+.mui-pull-top-wrapper {
+	width: 42px;
+	height: 42px;
+	display: block;
+	text-align: center;
+	background-color: #efeff4;
+	border: 1px solid #ddd;
+	border-radius: 25px;
+	background-clip: padding-box;
+	box-shadow: 0 4px 10px #bbb;
+	overflow: hidden;
+}
+.mui-pull-top-tips.mui-transitioning {
+	-webkit-transition-duration: 200ms;
+	transition-duration: 200ms;
+}
+.mui-pull-top-tips .mui-pull-loading {
+	/*-webkit-backface-visibility: hidden;
+	-webkit-transition-duration: 400ms;
+	transition-duration: 400ms;*/
+	
+	margin: 0;
+}
+.mui-pull-top-wrapper .mui-icon,
+.mui-pull-top-wrapper .mui-spinner {
+	margin-top: 7px;
+}
+.mui-pull-top-wrapper .mui-icon.mui-reverse {
+	/*-webkit-transform: rotate(180deg) translateZ(0);*/
+}
+.mui-pull-bottom-tips {
+	text-align: center;
+	background-color: #F5F5F5;
+	font-size: 15px;
+	line-height: 40px;
+	color: #777;
+}
+.mui-pull-top-canvas {
+	overflow: hidden;
+	background-color: #fafafa;
+	border-radius: 40px;
+	box-shadow: 0 4px 10px #bbb;
+	width: 40px;
+	height: 40px;
+	margin: 0 auto;
+}
+.mui-pull-top-canvas canvas {
+	width: 40px;
+}
+.mui-slider-indicator.mui-segmented-control {
+	background-color: #efeff4;
+}
+
+
+/* ================ no-network =================== */
+
+.no-network{
+	widows: 100%;
+	height: 80%;
+	display: none;
+}
+.no-network img{
+	position: absolute;
+	top: 2rem;
+	left: 50%;
+	width: 2rem!important;
+	margin-left: -1rem;
+}
+.no-network p{
+	float: left;
+	width: 100%;
+	margin-top: 4rem;
+	text-align: center;
+	font-size: 0.34rem;
+	color: #666;
+}
+.again-net{
+	position: absolute;
+	top: 4.6rem;
+	width: 4rem;
+	text-align: center;
+	height: 0.6rem;
+	line-height: 0.6rem;
+	left: 50%;
+	margin-left: -2rem;
+	font-size: 0.34rem;
+	color: #666;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

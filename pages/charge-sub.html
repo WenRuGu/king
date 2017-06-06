@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Charge</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" href="../css/charge-sub.css" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css"/>
+	</head>
+	<body>
+			<div class="mui-slider-group">
+				<div id="scroll1" class="mui-scroll-wrapper">
+					<div class="mui-scroll">
+						<div class="map-info">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script src="../js/mui.pullToRefresh.js"></script>
+		<script src="../js/mui.pullToRefresh.material.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/template.js"></script>
+		<script id="tmpl" type="text/html">
+			{{each data as item i}}
+			<div class="map-local-top" data-id='{{item.id}}'>
+				<p class="map-point-title">
+					<span class="map-point-title-b">{{item.cabinetName}}</span>
+					<a href="javascript:;" class="map-point-local mui-pull-right">
+						<span class="point-km"></span>
+						<span class="km">{{item.distance | km: item.distance}}km</span>
+					</a>
+				</p>
+				<p class="carspace">
+					<a href="javascript:;" class="space-car">
+						<span class="space-green"></span>
+						空闲:
+						<span class="space-num">{{item.freePoint}}</span>
+						个
+					</a>
+				</p>
+				<a class="mui-table-view-cell map-bot gohere" data-lng='{{item.lng}}' data-lat='{{item.lat}}'>
+					<span class="mui-icon iconfont icon-daozheliqu"></span>
+					到这里
+				</a>
+				<a class="mui-table-view-cell map-bot appointment">
+					<span class="mui-icon iconfont icon-yuyue3"></span>
+				            预约
+				</a>
+			</div>
+			{{/each}}
+		</script>
+		<script>
+		(function($, doc) {
+			$.init();
+			var deceleration = mui.os.ios?0.003:0.0009;
+			$('.mui-scroll-wrapper').scroll({
+				bounce: false,
+				indicators: true, 			//是否显示滚动条
+				deceleration:deceleration
+			});
+			var _self;
+			var localstorage = window.localStorage; 
+			var leo_ip = localstorage.getItem('ip');
+			var map_info = doc.getElementsByClassName('map-info')[0];
+			var slide = doc.getElementsByClassName('mui-slider-group')[0];
+			
+			var first = 0;
+			var pageNo = 0;
+			var pageSize = 10;
+			var lng;
+			var lat;
+			var distance;
+			var token;
+			var pull;
+			var network_flag = true;    // true 网络正常
+			
+			function wainshow() {
+			    if (plus.networkinfo.getCurrentType() == plus.networkinfo.CONNECTION_NONE) {
+			    	network_flag = false;
+					slide.style.display = 'none';
+			    } else {
+					network_flag = true;
+					slide.style.display = 'block';
+			    }
+			}
+			$.plusReady(function() {
+				_self = plus.webview.currentWebview();
+				wainshow();
+				window.addEventListener('network',function(event) {   // 监听网络正常
+					wainshow();
+				});
+				pull = $('.mui-slider-group .mui-scroll').pullToRefresh({
+					down: {
+						height: 50,
+						callback: function() {
+							var self = this;
+							mui.fire(plus.webview.getWebviewById('pages/tab-webview-subpage-charge.html'), 'charge', {
+								distance : localstorage.getItem('distance'),
+								zoom: localstorage.getItem('zoom')
+							})
+							pageNo = 0;
+							self.refresh(true);
+							setTimeout(function() {
+								createFragment();			
+								self.endPullDownToRefresh();
+							}, 1000);
+						}
+					},
+					up: {
+						contentnomore: '没有更多桩点了',
+						callback: function() {
+							var self = this;
+							if ( first == 0 ) {     // 刚开始不用 停止一秒，反应会很慢
+								createFragment();
+								self.endPullUpToRefresh();
+								first = 1;
+							} else {
+								setTimeout(function() {
+									createFragment();
+									self.endPullUpToRefresh();
+								}, 600);
+							}
+						}
+					}
+				});
+				template.helper('km', function(m) {
+					return (m/1000).toFixed(2);
+				});
+//				template.helper('km', function( km ) {
+//						if(km == 0){
+//							return "";
+//						}else if(km < 1000){
+//							 var dis = parseFloat(km);
+//							return dis.toFixed(1)+"m";
+//						}else{
+//							return Number(km/1000).toFixed(1)+"km";
+//						}
+//				});
+				var createFragment = function() {
+					token = localstorage.getItem('token');
+					if ( lng == undefined ) {
+						lng = localstorage.getItem('lng');
+						lat = localstorage.getItem('lat');
+						distance = localstorage.getItem('distance');
+					}
+//					console.log(leo_ip+','+lng+','+distance);
+					mui.ajax(leo_ip + '/api/v1/hdw/cabinet/nearest',{
+						data:{
+							lng: lng,
+							lat: lat,
+							distance: distance,
+							offset: pageNo*pageSize,
+							limit: pageSize
+						},
+						dataType:'json',
+						type:'post',
+						timeout:10000,
+						success:function(data){
+							console.log(JSON.stringify(data));
+							if ( data.code == 0 ) {
+								if ( pageNo == 0 ) {
+									map_info.innerHTML = '';
+								}
+								pageNo++;
+								if ( data.data.length < 10 ) {  // 没有更多数据
+									pull.endPullUpToRefresh(true);
+								}
+								var html = template('tmpl', data);
+								map_info.innerHTML += html;
+							}
+						},
+						error:function(xhr,type,errorThrown){
+						}
+					});
+				}
+			})
+			window.addEventListener('point', function(event) {
+				lng = event.detail.lng;
+				lat = event.detail.lat;
+				distance = event.detail.distance;
+				console.log('sub = '+lng+','+lat+','+distance);
+				pageNo = 0;     // 判断条件，也是每次 更新 附近信息
+				pageSize = 10;
+				function getPull() {
+					if ( pull == undefined) {
+						setTimeout(function() {
+							getPull();
+						}, 30);
+					} else {
+						pull.pullDownLoading();
+					}
+				}
+				getPull();
+			});
+			if ( mui.os.ios ) {
+				function getPull() {
+					if ( pull == undefined ) {
+						setTimeout(function() {
+							getPull();
+						}, 100);
+					} else {
+						lng = localstorage.getItem('lng');
+						lat = localstorage.getItem('lat');
+						distance = localstorage.getItem('distance');
+						pull.pullUpLoading();
+					}
+				}
+				getPull();
+			}
+			function androidMarket( pname ) {
+				plus.runtime.openURL( "market://details?id="+pname );
+			}
+			function iosAppstore( url ) {
+				plus.runtime.openURL( "itms-apps://"+url );
+			}
+			function openBMap( lng, lat, endlng, endlat) {
+				var url=null,id=null,f=null;
+				if ( mui.os.android ) {
+					// 规范参考官方网站：http://developer.baidu.com/map/index.php?title=uri/api/android
+					url = 'bdapp://map/direction?origin='+ lat +','+ lng +'&destination='+ endlat +','+ endlng +'&mode=driving';
+					f = androidMarket;
+					id = "com.baidu.BaiduMap";
+				} else {
+					// 规范参考官方网站：http://developer.baidu.com/map/index.php?title=uri/api/ios
+					url = "baidumap://map/direction?origin="+lat+","+lng+"&destination="+ endlat +","+ endlng +"&mode=driving&src=webapp.navi.yourCompanyName.Charge";
+					f = iosAppstore;
+					id = "itunes.apple.com/cn/app/bai-du-de-tu-yu-yin-dao-hang/id452186370?mt=8";
+				}
+				url = encodeURI(url);
+				plus.runtime.openURL( url, function(e) {
+					plus.nativeUI.confirm( "检查到您未安装\"百度地图\"，是否到商城搜索下载？", function(i){
+						if ( i.index == 0 ) {
+							f(id);
+						} else {
+							plus.nativeUI.alert(url);
+							url = 'http://api.map.baidu.com/direction?origin=latlng:'+lat+','+lng+'|name:我的位置&destination='+endlat+','+endlng+'&mode=driving&region=杭州&output=html&src=yourCompanyName|换电网';
+							url = encodeURI(url);
+							$.openWindow({
+								id: 'map.html',
+								url: 'map.html',
+								show: {
+									aniShow: 'slide-in-right',
+									duration: 200
+								},
+								styles: {
+									popGesture: 'close'
+								},
+								extras: {
+									url: url,
+								},
+								waiting:{
+									autoShow: false
+								}
+							});
+						}
+					});
+				});
+			}
+
+			$('.map-info').on('tap','.gohere',function() {   // button的背景不改变颜色。
+				var golng = lng || localstorage.getItem('lng');
+				var golat = lat || localstorage.getItem('lat');
+				var endlng = this.getAttribute('data-lng');
+				var endlat = this.getAttribute('data-lat');
+				if ( lng == undefined ) {
+					lng = localstorage.getItem('lng');
+					lat = localstorage.getItem('lat');
+					distance = localstorage.getItem('distance');
+				}
+//				console.log(golng+','+golat+','+endlng+','+endlat);
+				openBMap( golng, golat, endlng, endlat );
+			});
+			$('.map-info').on('tap','.appointment',function() {   // button的背景不改变颜色。
+				wainshow();
+				if ( !network_flag ) {
+					mui.toast('当前网络不给力，请稍后再试');
+					return;
+				}
+				var cabinetId = this.parentNode.getAttribute('data-id');
+				plus.nativeUI.showWaiting('正在加载...',{
+					loading:{
+						display:'inline'
+					}
+				});
+				$.openWindow({
+					id: 'booking-details.html',
+					url: 'booking-details.html',
+					show: {
+						aniShow: 'slide-in-right',
+						duration: 200
+					},
+					styles: {
+						popGesture: 'close'
+					},
+					extras: {
+						cabinetId: cabinetId
+					},
+					waiting:{
+						autoShow: false
+					}
+				});
+			});
+		}(mui, document));
+		</script>
+	</body>
+
+</html>

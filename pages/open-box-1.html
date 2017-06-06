@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<style>
+			body{
+				background: #fff;
+			}
+			.mui-bar{
+				/*-webkit-box-shadow: none;
+				box-shadow: none;*/
+				
+				background: #fff;
+			}
+			p{
+				width: 100%;
+				text-align: center;
+				margin-bottom: 0;
+			}
+			.first-p{
+				float: left;
+				margin-top: 1.2rem;
+				width: 100%;
+				height: 0.68rem;
+				line-height: 0.68rem;
+				text-align: center;
+				font-size: 0.4rem;
+				color: #333;
+			}
+			.none{
+				opacity: 0;
+			}
+			span.mui-pull-right{
+				font-size: 0.26rem;
+				color: #888;
+				line-height: 0.8rem;
+				margin-right: 0.5rem;
+			}
+			.first-pic{
+				position: relative;
+				width: 2rem;
+				height: 2rem;
+				margin-top: 1rem;
+				left: 50%;
+				margin-left: -1rem;
+			}
+			.p1{
+				margin-top: 0.9rem;
+				font-size: 0.32rem;
+				color: #000;
+			}
+			.p2{
+				padding: 0 1.7rem;
+				margin-top: 0.3rem;
+				font-size: 0.28rem;
+			}
+			.p3{
+				position: absolute;
+				height: 0.6rem;
+				line-height: 0.6rem;
+				bottom: 1rem;
+				font-size: 0.3rem;
+			}
+			.box{
+				font-size: 0.34rem;
+				color:#333;
+				margin-top: 0.6rem;
+			}
+			.again{
+				color: #38f;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">换电</h1>
+		</header>
+		<p class="first-p">
+			<span class="mui-pull-left none">第二步</span>
+			第一步
+			<span class="mui-pull-right">第二步</span>
+		</p>
+		<img class="first-pic" src="../img/code-1.png"/>
+		<p class="box"><span>箱子编号：</span><span class="box-num"></span></p>
+		<p class="p1">放入电池</p>
+		<p class="p2">请将待充电池放入已打开箱门，请接好电源并关闭箱门</span></p>
+		
+		<p class="p3">若箱门未打开或已关闭 请点击 <span class="again">重新开箱</span></p>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			var box_num = document.getElementsByClassName('box-num')[0];
+			
+			var localstorage = window.localStorage;
+			var scan_ip = localstorage.getItem('ip');
+			
+			mui.plusReady(function() {
+				var self = plus.webview.currentWebview();
+//				plus.webview.close('payment.html');
+				function again(){
+					token = localstorage.getItem('token');
+					console.log(self.code+'，'+self.orderId);
+					mui.ajax(scan_ip +'/api/v1/hdw/cabinet/open_empty_box',{
+						data:{
+							token: token,
+							cabinetId:self.code,
+							orderId: self.orderId
+						},
+						dataType:'json',
+						type:'post',
+						timeout:10000,            
+						success:function(data){
+							console.log(JSON.stringify(data));
+							if ( data.code == 0 ) {
+								box_num.innerHTML = data.data.boxNum;
+								closeBox();
+							} else {
+								plus.nativeUI.alert(data.message);
+							}
+	 					},
+						error:function(xhr,type,errorThrown){
+							plus.nativeUI.alert('开空箱失败，请点击重新开箱');
+						}
+					});
+				}
+				function closeBox(){
+					token = localstorage.getItem('token');
+					mui.post(scan_ip +'/api/v1/hdw/cabinet/check_close_box',{
+							token: token,
+							cabinetId: self.cabinetId,
+							boxNum: box_num.innerHTML,
+							orderId: self.orderId
+						},function(data){
+							if ( data.code == 0) {
+								mui.openWindow({
+									id: 'open-box-2.html',
+									url: 'open-box-2.html',
+									show: {
+										aniShow: 'slide-in-right'
+									},
+									styles: {
+										popGesture: 'close'
+									},
+									waiting: {
+										autoShow: false
+									},
+									extras: {
+										orderId: self.orderId,
+										boxNum: boxNum.innerHTML,
+										cabinetId: self.code
+									}
+								});
+							} else {
+								setTimeout(function() {
+									closeBox();
+								}, 2000)
+							}
+						},'json'
+					);
+				}
+				again();
+				mui('.again')[0].addEventListener('tap', function() {
+					again();		  // 重新开箱
+				});
+				
+				var old_back = mui.back;  
+                mui.back = function() {  
+					plus.webview.close('pages/tab-webview-subpage-scan.html');
+					old_back();
+                }     
+			})
+		</script>
+	</body>
+
+</html>

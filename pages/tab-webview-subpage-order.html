@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Charge</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="../css/order.css"/>
+	</head>
+
+	<body>
+		<div class="wrap">
+			<div class="nav">
+				<ul class="nav-list">
+					<li data-index='0' class="list-blue">未付款</li>
+					<li data-index='1' class="">已付款</li>
+					<li data-index='2' class="">已完成</li>
+				</ul>
+				<div class="nav-active"></div>
+			</div>
+			<div class="mui-slider mui-fullscreen" style="height: auto;">
+				<div class="slider-group">
+				<!--<div class="mui-slider-group">-->
+					<!--<div class="mui-slider-item">-->
+					<div class="slider-item">
+						<div class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<ul class="mui-table-view first" >
+					           </ul>
+							</div>
+						</div>
+					</div>
+					<!--<div class="mui-slider-item">-->
+					<div class="slider-item">
+						<div class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<ul class="mui-table-view second">
+					            </ul>
+							</div>
+						</div>
+					</div>
+					<!--<div class="mui-slider-item">-->
+					<div class="slider-item">
+						<div class="mui-scroll-wrapper">
+							<div class="mui-scroll">
+								<ul class="mui-table-view three">
+					            </ul>
+							</div>
+						</div>
+					</div>
+				</div>
+				</div>
+			</div>
+		<script src="../js/mui.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script src="../js/swiper.min.js"></script>
+		<script src="../js/mui.pullToRefresh.js"></script>
+		<script src="../js/mui.pullToRefresh.material.js"></script>
+		<script src="../js/template.js"></script>
+		<script src="../js/common.js"></script>
+		<script id="pay" type="text/html">
+		{{each data as item i}}
+			 <li class="view-cell" data-id='{{item.id}}'>
+        		<p class="order-number">订单编号：{{item.id}}</p>
+        		<p class="order-goods-name">
+        			<span class="mui-pull-left">商品名称：{{item.orderName}}</span>
+        			<span class="mui-pull-right">¥{{item.totalPrice/100}}</span>
+        		</p>
+        		<p class="order-seller-name">
+        			<span class="mui-pull-left">订单描述：{{item.orderDesc}}</span>
+        			<span class="mui-pull-right">已付款</span>
+        		</p>
+            </li>
+		{{/each}}
+		</script>
+		<script id="complete" type="text/html">
+		{{each data as item i}}
+			 <li class="view-cell" data-id='{{item.id}}'>
+        		<p class="order-number">订单编号：{{item.id}}</p>
+        		<p class="order-goods-name">
+        			<span class="mui-pull-left">商品名称：{{item.orderName}}</span>
+        			<span class="mui-pull-right">¥{{item.totalPrice/100}}</span>
+        		</p>
+        		<p class="order-seller-name">
+        			<span class="mui-pull-left">订单描述：{{item.orderDesc}}</span>
+        			<span class="mui-pull-right">已完成</span>
+        		</p>
+            </li>
+		{{/each}}
+		</script>
+		<script id="wait_pay" type="text/html">
+		{{each data as item i}}
+			 <li class="mui-table-view-cell mui-collapse" data-id='{{item.id}}' data-amount='{{item.amount}}' data-price='{{item.price}}' data-totalPrice='{{item.totalPrice}}' data-orderName='{{item.orderName}}'>
+			 	<a href="javascript:;">
+	        		<p class="order-number">订单编号：{{item.id}}</p>
+	        		<p class="order-goods-name">
+	        			<span class="mui-pull-left goods-title">商品名称：{{item.orderName}}</span>
+	        			<span class="mui-pull-right">¥{{item.totalPrice/100}}</span>
+	        		</p>
+	        		<p class="order-seller-name">
+	        			<span class="mui-pull-left">订单描述：{{item.orderDesc}}</span>
+	        			<span class="mui-pull-right">未付款</span>
+	        		</p>
+			 	</a>
+        		<div class="mui-collapse-content">
+                	<button type="button" class="mui-btn mui-btn-gray">取消订单</button>
+                	<button type="button" class="mui-btn-blue mui-btn-primary">立即付款</button>
+        		</div>
+            </li>
+		{{/each}}
+		</script>
+		<script>
+			mui.init();
+			(function($) {
+				var deceleration = mui.os.ios?0.0003:0.0006;
+				$('.mui-scroll-wrapper').scroll({
+					bounce: false,
+					indicators: true, 
+					deceleration:deceleration
+				});
+				var offset = [0,0,0];
+				var limit = 10
+				
+				var nav_li = document.querySelectorAll('.nav-list li');
+				var slide = document.getElementsByClassName('mui-slider')[0];
+				
+				var s_group;   // 版本5以下
+				var token;
+				var localstorage = window.localStorage; 
+				var order_ip = localstorage.getItem('ip');
+				var order_ul = document.getElementsByClassName('mui-table-view');
+				var group = document.getElementsByClassName('mui-scroll-wrapper');
+				
+				var slider = mui.os.ios ? mui('.mui-slider').slider() : null;
+				var index = 0;
+				var startX = 0;
+				var endX = 0;
+				var pull_flag = true;
+				var w = document.documentElement.clientWidth || document.body.clientWidth || window.screen.width || localstorage.getItem('width');
+				var pull_all = [];
+				var _self;
+				var network_flag = true;    // true 网络正常
+				var version = true;
+				
+				function wainshow() {
+				    if (plus.networkinfo.getCurrentType() == plus.networkinfo.CONNECTION_NONE) {
+				    	network_flag = false;
+				    	mui.fire(plus.webview.getLaunchWebview(),'update-network',{});
+				    } else {
+						network_flag = true;
+				    }
+				}
+				
+				$.plusReady(function() {
+					_self = plus.webview.currentWebview();
+					_self.setStyle({
+						scrollIndicator: 'none'
+					});
+					wainshow();
+					function toggle_style() {
+						s_group = document.querySelector('.mui-slider>div');
+						s_group.className = 'mui-slider-group';
+						for ( var i = 0; i < 3; i++ ) {
+							s_group.children[i].className = 'mui-slider-item';
+						}
+						slider = mui('.mui-slider').slider();
+					}
+					if ( plus.os.name == 'Android' ) {
+						if ( parseInt(plus.os.version) < 5 ) {
+							version = false;
+							s_group = document.querySelector('.mui-slider>div');
+							s_group.className = 'slider-group';
+							s_group.style.width= w * 3+"px";
+							for ( var i = 0; i < 3; i++ ) {
+								s_group.children[i].className = 'slider-item';
+								s_group.children[i].style.width = w + 'px';
+							}
+							mui(".nav-active")[0].style.webkitTransition = 'none';
+							mui(".nav-active")[0].style.transition = 'none';
+						} else {
+							toggle_style();
+						}
+					} else {
+						toggle_style();
+					}
+					
+					window.addEventListener('network', function(event){
+						wainshow();
+						for ( var i = 0; i < 3; i++ ) {
+							pull_all[i].pullUpLoading(); 
+						}
+					});
+					function slide_flag() {
+						if ( version) {
+							slider.stopped = true;      // slider禁止滑动
+							slide.removeEventListener('swiperight', swiperight, false);  // 自定义右滑禁止滑动
+							slide.removeEventListener('swipeleft', swipeleft, false);
+							slide.removeEventListener('dragend', chdrag,false);			// 自定义拖拽结束禁止右话
+							setTimeout(function() {
+								slider.stopped = false;
+								slide.addEventListener('swiperight', swiperight, false);
+								slide.addEventListener('swipeleft', swipeleft, false);
+								slide.addEventListener('dragend', chdrag,false);
+							}, 350);
+						}
+					}
+					mui('.nav-list').on('tap','li', tap_slide, false);
+					function tap_slide() {
+						index = this.getAttribute('data-index');
+						mui('.nav-list li').each(function() {
+							this.className = '';
+						});
+						this.className = 'list-blue';
+						if ( version ) {
+							slide_flag();
+							slider.gotoItem(index);
+						} else {
+							s_group.style.webkitTransform = "translate3d(-" + w * index + "px,0,0)";
+							s_group.style.transform = "translate3d(-" + w * index + "px,0,0)";
+						}
+						mui(".nav-active")[0].style.webkitTransform = "translate3d(" + (100 * index + 2 * index * 17 + 18) + "%,0,0)";
+						mui(".nav-active")[0].style.transform = "translate3d(" + (100 * index + 2 * index * 17 + 18) + "%,0,0)";
+					};
+					
+					slide.addEventListener('slide', function(e) {
+						if ( version ) {
+							drag_true();
+							var p = index;
+							mui('.nav-list li').each(function(){
+								this.className = '';
+							});
+							s_group.style.webkitTransform = "translate3d(-" + w * p + "px,0,0)";
+							s_group.style.transform = "translate3d(-" + w * p + "px,0,0)";
+							$(".nav-active")[0].style.webkitTransform = "translate3d(" + (100 * p + 2 * p * 17 + 18) + "%,0,0)";
+							$(".nav-active")[0].style.transform = "translate3d(" + (100 * p + 2 * p * 17 + 18) + "%,0,0)";
+							nav_li[p].className = 'list-blue';
+						}
+					});
+					slide.addEventListener('swipeleft', swipeleft, false); 
+					slide.addEventListener('swiperight', swiperight ,false);
+					function swipeleft(e) {
+						e.stopPropagation();
+						index++;
+						if (index >= 2 ) {
+							index = 2;
+						}
+						mui('.nav-list li').each(function(){
+							this.className = '';
+						});
+						nav_li[index].className = 'list-blue';
+						if ( version ) {
+							drag_false();
+							slide_flag();
+							slider.gotoItem(index,0);
+						} else {
+							s_group.style.webkitTransform = "translate3d(-" + w * index + "px,0,0)";
+							s_group.style.transform = "translate3d(-" + w * index + "px,0,0)";
+						}
+						$(".nav-active")[0].style.webkitTransform = "translate3d(" + (100 * index + 2 * index * 17 + 18) + "%,0,0)";
+						$(".nav-active")[0].style.transform = "translate3d(" + (100 * index + 2 * index * 17 + 18) + "%,0,0)";
+					};
+					function swiperight(e) {
+						e.stopPropagation();
+						index--;
+						if (index <= 0 ) {
+							index = 0;
+						} 
+						mui('.nav-list li').each(function(){
+							this.className = '';
+						});
+						nav_li[index].className = 'list-blue';
+						if ( version ) {
+							drag_false();
+							slide_flag();
+							slider.gotoItem(index);
+						} else {
+							s_group.style.webkitTransform = "translate3d(-" + w * index + "px,0,0)";
+							s_group.style.transform = "translate3d(-" + w * index + "px,0,0)";
+						}
+						$(".nav-active")[0].style.webkitTransform = "translate3d(" + (100 * index + 2*index*17 + 18) + "%,0,0)";
+						$(".nav-active")[0].style.transform = "translate3d(" + (100 * index + 2*index*17 + 18) + "%,0,0)";
+					};
+					if ( version ) {
+						slide.addEventListener('touchstart',chstart,false);
+				        slide.addEventListener('touchmove',chmove,false);
+				        slide.addEventListener('touchend',chend,false);
+				        slide.addEventListener('dragend', chdrag,false);
+					} 		
+			        function drag_true(){
+						slide.addEventListener("dragend", chdrag, false);
+			        }
+			        function drag_false(){
+						slide.removeEventListener("dragend", chdrag, false);
+			        }
+			        function chdrag(e) {
+			        	e.stopPropagation();
+			        	if (pull_flag){
+			        		return;
+			        	}
+			        	if ( (startX - endX)/360 >= 0.4 ) {  // ++
+			        		index++;
+			        		if (index >= 2 ) {
+								index = 2;
+							} 
+							slider.gotoItem(index);
+			        	}
+			        	if ( (startX - endX)/360 <= -0.4 ) {
+			        		index--;
+			        		if (index <= 0 ) {
+								index = 0;
+							} 
+			        		slider.gotoItem(index);
+			        	}
+			        	mui('.nav-list li').each(function(){
+							this.className = '';
+						});
+			        	nav_li[index].className = 'list-blue';
+			        	s_group.style.webkitTransform = "translate3d(-" + w * index + "px,0,0)";
+						s_group.style.transform = "translate3d(-" + w * index + "px,0,0)";
+						$(".nav-active")[0].style.webkitTransform = "translate3d(" + (100 * index + 2*index*17 + 18) + "%,0,0)";
+						$(".nav-active")[0].style.transform = "translate3d(" + (100 * index + 2*index*17 + 18) + "%,0,0)";
+						pull_flag = true;
+						slide_flag();
+			        };
+			        function chstart(ev){
+			        	pull_flag = false;
+			        	ev.preventDefault;
+			            var touch = ev.touches[0];
+			            startX = touch.pageX;
+			        }
+			        function chmove(ev){
+			        	ev.preventDefault;
+			            var touch = ev.touches[0];		
+			            endX = touch.pageX;
+			        }
+			        function chend(){    
+			        	slider.gotoItem(index);
+			        }
+					var ele = '.mui-slider-group .mui-scroll';
+					if ( !version ) {
+						ele = '.slider-group .mui-scroll';
+					}
+					$.each(document.querySelectorAll( ele ), function(index, pullRefreshEl) {
+						pull_all[index] = $(pullRefreshEl).pullToRefresh({
+							down: {
+								height: 100,
+								callback: function() {
+									var self = this;
+									self.refresh(true);
+									if ( version ) {
+										slider.stopped = true;
+										mui('.nav-list').off('tap','li', tap_slide);
+										slide.removeEventListener('dragend', chdrag,false);
+									}
+									offset[index] = 0;
+									setTimeout(function() {
+										createFragment(index);   // index offset limit
+										self.endPullDownToRefresh();
+										if ( version ) {
+											slider.stopped = false;
+											mui('.nav-list').on('tap','li', tap_slide);
+											slide.addEventListener('dragend', chdrag,false);
+										}
+									}, 600);
+								}
+							},
+							up: {
+								height: 100,
+								contentnomore: '没有更多订单了',
+								callback: function() {
+									var self = this;
+									setTimeout(function() {
+										createFragment( index );
+										self.endPullUpToRefresh();
+									}, 600);
+								}
+							}
+						});
+					});
+					
+					var createFragment = function( index ) {    //   index 值为  0，1,2,3
+						token = localstorage.getItem('token');
+						var categoryId = plus.storage.getItem('itemId'+index);
+						var fragment = document.createDocumentFragment();
+						var li;
+						var type;
+						var pay_state;
+						var tem;
+						if ( index == 0) {
+							type = 'wait_pay';
+						} else if ( index == 1 ) {
+							type = 'pay';
+						} else {
+							type = 'complete';
+						}
+//						console.log(index+','+offset[index]+','+limit+','+token);
+						mui.ajax( order_ip+'/api/v1/hdw/common_order/my',{
+							data:{
+								token: token,
+								type: type,
+								offset: offset[index] * limit,
+								limit: limit
+							},
+							dataType:'json',
+							type:'post',
+							timeout:10000,	              
+							success:function(data){
+//								console.log(index+'order = ='+JSON.stringify(data));
+								if ( data.code == 0 ) {
+									if ( offset[index] == 0 ) {
+										order_ul[index].innerHTML = '';
+									}
+									offset[index]++;
+									if ( data.data.length < 10 ) {  
+										pull_all[index].endPullUpToRefresh(true);
+									}
+									var html = template( type, data);
+									order_ul[index].innerHTML += html;
+								}
+							},
+							error:function(xhr,type,errorThrown){
+								plus.nativeUI.closeWaiting();
+//								if ( type == 'timeout') {
+//									mui.toast('请求超时');
+//								} else if ( type == 'abort') {
+//									mui.toast('网络异常，请稍后再试');
+//								}
+							}
+						});
+					}
+					function order() {
+						if ( localstorage.getItem('loginFlag') == 'true' ) {   // 还在登录状态， 没有退出过登录
+							if ( network_flag ) {
+								var token_timer = setInterval(function(){
+									if ( localstorage.getItem('token') != null ) {
+										clearInterval(token_timer);   
+										// 遍历 pull_all.pullUpLoading(); 只有一个被调用上拉
+										for ( var i = 0; i < 3; i++) {
+											createFragment(i);
+										}
+									}
+								}, 199);
+							}
+						}
+					}
+					window.addEventListener('quit-init-order', function(event) { // 退出登录 
+						offset = [0,0,0];
+						limit = 10;
+						for ( var i = 0; i < 3; i++ ) {
+							pull_all[i].refresh(true);
+							$('.mui-scroll-wrapper').scroll()[i].scrollTo(0,1,1);
+							order_ul[i].innerHTML = '';
+							nav_li[i].className = '';
+						}
+						index = 0;
+						$(".nav-active")[0].style.webkitTransform = "translate3d(" + (100 * index + 2*index*17 + 18) + "%,0,0)";
+						$(".nav-active")[0].style.transform = "translate3d(" + (100 * index + 2*index*17 + 18) + "%,0,0)";
+						nav_li[0].className = 'list-blue';
+						console.log('blue');
+						if ( version ) {
+							slider.gotoItem(index);
+						} else {
+							s_group.style.webkitTransform = "translate3d(0px,0,0)";
+							s_group.style.transform = "translate3d(0px,0,0)";
+						}
+					});
+					window.addEventListener('update-order', function(event) {  // 商城购买/余额支付之后 ，刷新订单
+						console.log('order===更新');
+						offset = [0,0,0];
+						limit = 10;
+						for ( var i = 0; i < 3; i++) {
+//							pull_all[i].pullUpLoading();
+							order_ul[i].innerHTML = '';
+							createFragment( i);
+						}
+						index = 0;
+						mui(".nav-active")[0].style.webkitTransform = "translate3d(" + 100 * index + "%,0,0)";
+						mui(".nav-active")[0].style.transform = "translate3d(" + 100 * index + "%,0,0)";
+						mui('.nav-list li').each(function() {
+							this.className = '';
+						});
+						nav_li[index].className = 'list-blue';
+						if ( version ) {
+							slider.gotoItem(index);
+						} else {
+							s_group.style.webkitTransform = "translate3d(0px,0,0)";
+							s_group.style.transform = "translate3d(0px,0,0)";
+						}
+					});
+					setTimeout(function(){  
+						order();
+					}, 2000);
+					window.addEventListener('init-order', function(event) {  // login页
+						order();
+					});
+					mui('.first').on('tap','.mui-btn-gray', function() {
+						wainshow();
+						if ( !network_flag ) {
+							mui.toast('当前网络不给力，请稍后再试');
+							return;
+						}
+						token = localstorage.getItem('token');
+						var id = this.parentNode.parentNode.getAttribute('data-id');
+						mui.post( order_ip + '/api/v1/hdw/common_order/cancel',{
+								token: token,
+								orderId: id
+						},function(data){
+							console.log(JSON.stringify(data));
+								if ( data.code == 0 ) {
+									plus.nativeUI.toast('取消成功');
+									offset[0] = 0;
+									createFragment(0);
+								}
+							},'json'
+						); 
+					});
+					mui('.first').on('tap','.mui-btn-blue', function() {
+						wainshow();
+						if ( !network_flag ) {
+							mui.toast('当前网络不给力，请稍后再试');
+							return;
+						}
+						token = localstorage.getItem('token');
+						var orderId = this.parentNode.parentNode.getAttribute('data-id');
+						var orderPrice = this.parentNode.parentNode.getAttribute('data-price');
+						var totalPrice = this.parentNode.parentNode.getAttribute('data-totalPrice');
+						var amount = this.parentNode.parentNode.getAttribute('data-amount');
+						var orderName = this.parentNode.parentNode.getAttribute('data-orderName');
+						$.openWindow({
+							url: 'payment.html',
+							show: {
+								aniShow: 'slide-in-right'
+							},
+							styles: {
+								popGesture: 'close'
+							},
+							extras: {
+								orderId: orderId,
+								price:orderPrice/100,
+								total:totalPrice/100,
+								amount:amount,
+								itemName:orderName
+							},
+							waiting:{
+								autoShow: false
+							}
+						});
+					});
+				});
+			})(mui);
+		</script>
+	</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

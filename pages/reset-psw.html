@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/set-psw.css" />
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">设置密码</h1>
+		</header>
+		
+		<form class="mui-input-group">
+		    <div class="mui-input-row">
+		        <label>新密码</label>
+		    	<input type="password" class="first-psw mui-input-clear" placeholder="请输入6-12数字或字母密码">
+		    </div>
+		    <div class="mui-input-row">
+		        <label>确认密码</label>
+		        <input type="password" class="second-psw mui-input-password" placeholder="请再次输入密码">
+		    </div>
+		</form>
+		<button type="button" class=" finish mui-btn mui-btn-primary" disabled="disabled">完成</button>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script src="../js/md5.js"></script>
+		<script src="../js/sha1.js"></script>
+		<script src="../js/reset-psw.js"></script>
+	</body>
+
+</html>

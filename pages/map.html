@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<script src="http://api.map.baidu.com/api?v=2.0&ak=qxRPVsSUD3OOsPNczFLYtKPIo4xws2Wk" type="text/javascript"></script>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav" style="background: #fff;">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">路线地图</h1>
+		</header>
+		<script src="../js/mui.min.js"></script>
+		<script type="text/javascript">
+			var self;
+			mui.plusReady(function() {
+				self = plus.webview.currentWebview();
+				mui.init({
+					subpages:[{
+				      url: self.url,
+				      id:'map',
+				      styles:{
+				        top:'45px',
+				        bottom:'0px'
+				      }
+				    }]
+				});
+			})
+		</script>
+	</body>
+
+</html>

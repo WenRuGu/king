@@ -1,0 +1,509 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>Charge</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/mall.css"/>
+	</head>
+	<body>
+		<div class="mui-content">
+			<div class="nav">
+				<ul class="nav-list">
+			        <li data-index='0' class="list-blue"></li>
+			        <li data-index='1'></li>
+			        <li data-index='2'></li>
+			        <li data-index='3'></li>
+			   </ul>
+			   <div class="nav-active"></div>
+			</div>
+			<div class="mui-slider mui-fullscreen" style="height: auto;">
+		        <!--<div class="mui-slider-group">-->
+		        <div class="slider-group">
+		        	<!--<div class="mui-slider-item">-->
+		        	<div class="slider-item">
+						<div class="mui-scroll-wrapper first-ul">
+							<div class="mui-scroll">
+								<div class="loading">
+									<button type="button" data-loading-text="加载中" class="mui-btn mui-btn-outlined">加载中</button>
+								</div>
+								<ul class="foods">
+								</ul>
+							</div>	
+						</div>
+					</div>
+		            <!--<div class="mui-slider-item">-->
+		            <div class="slider-item">
+							<div class="mui-scroll-wrapper sec-ul">
+								<div class="mui-scroll ">
+									<ul class="foods">
+									</ul>
+								</div>	
+						</div>
+		            </div>
+		            <!--<div class="mui-slider-item">-->
+		            <div class="slider-item">
+						<div class="mui-scroll-wrapper three-ul">
+							<div class="mui-scroll">
+								<ul class="foods">
+								</ul>
+							</div>	
+						</div>
+		            </div>
+		            <!--<div class="mui-slider-item">-->
+		            <div class="slider-item">
+						<div class="mui-scroll-wrapper four-ul">
+							<div class="mui-scroll">
+								<ul class="foods">
+								</ul>
+							</div>	
+						</div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+		<script src="../js/mui.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script src="../js/mui.pullToRefresh.js"></script>
+		<script src="../js/mui.pullToRefresh.material.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/template.js"></script>
+		<script id="tmpl" type="text/html">
+			{{each data as item i}}
+	        <li data-id='{{item.id}}'>
+				<img data-src="{{item.imageList[0]}}" src="../img/mall-default-3.jpg" class="lazy" />
+				<p class="mall-title">{{item.itemName}}</p>
+				<p class="mall-price-new">¥{{item.price}}<span class="mall-price-old">¥{{item.showPrice}}</span></p>
+			</li>
+			{{/each}}
+		</script>
+		<script>
+			mui.init();
+			var localstorage = window.localStorage; 
+			var mall_ip = localstorage.getItem('ip');
+			var foods = document.getElementsByClassName('foods');
+
+			var nav = document.getElementsByClassName('nav')[0];
+			var nav_list = document.getElementsByClassName('nav-list')[0];
+			var slide = document.getElementsByClassName('mui-slider')[0];
+			
+			var nav_li = nav_list.querySelectorAll('li');
+	
+			var slider = mui.os.ios ? mui('.mui-slider').slider() : null;
+			var s_group;
+			var token;
+			var sindex = 0;					  // 页面div index
+			var startX = 0;
+			var endX = 0;
+			var first_ajax = 0;				  // 第一次请求 登录和 监听 fire，不重复请求
+			var pull_flag = true;
+			var w = document.documentElement.clientWidth || window.screen.width || localstorage.getItem('width');  // 有些页面 获取 宽度为0
+			var pull_all = [];				  // 上拉下拉的 对象
+			var _self;
+			var network_flag = true;  		  // true为有网络
+			var offset = [0,0,0,0];       	  // 偏移量
+			var limit = [10,10,10,10];        // 返回的记录数
+			var list_title = [];
+			var list_id = [];
+			var version = true;				  // 安卓版本 > 5
+			
+			function wainshow() {
+			    if (plus.networkinfo.getCurrentType() == plus.networkinfo.CONNECTION_NONE) {
+			    	network_flag = false;
+			    } else {
+					network_flag = true;
+			    }
+			}
+			var deceleration = mui.os.ios?0.0006:0.0003;
+			mui('.mui-scroll-wrapper').scroll({
+				deceleration:deceleration,
+				bounce: false
+			});
+			mui('.mui-btn-outlined').button('loading');    // 避免初始看见空白，有个加载效果
+			mui.plusReady(function() {
+				_self = plus.webview.currentWebview();
+				_self.setStyle({
+					scrollIndicator: 'none'
+				});
+				wainshow();
+				function toggle_style() {				  // version <= 5 div动画的改变
+					s_group = document.querySelector('.mui-slider>div');
+					s_group.className = 'mui-slider-group';
+					for ( var i = 0; i < 4; i++ ) {
+						s_group.children[i].className = 'mui-slider-item';
+					}
+					slider = mui('.mui-slider').slider();
+				}
+				if ( plus.os.name == 'Android' ) {
+					if ( parseInt(plus.os.version) < 5 ) {
+						version = false;
+						s_group = document.querySelector('.mui-slider>div');
+						s_group.className = 'slider-group';
+						s_group.style.width= w * 4+"px";
+						for ( var i = 0; i < 4; i++ ) {
+							s_group.children[i].className = 'slider-item';
+							s_group.children[i].style.width = w + 'px';
+						}
+						mui(".nav-active")[0].style.webkitTransition = 'none';
+						mui(".nav-active")[0].style.transition = 'none';
+					} else {
+						toggle_style();
+					}
+				} else {
+					toggle_style();
+				}
+				function slide_flag() {											// 避免滑动太快
+					slider.stopped = true;               						// slider禁止滑动
+					slide.removeEventListener('swiperight', swiperight, false); // 自定义右滑禁止滑动
+					slide.removeEventListener('swipeleft', swipeleft, false);
+					slide.removeEventListener('dragend', chdrag,false);			// 自定义拖拽结束禁止右话
+					setTimeout(function() {
+						slider.stopped = false;
+						slide.addEventListener('swiperight', swiperight, false);
+						slide.addEventListener('swipeleft', swipeleft, false);
+						slide.addEventListener('dragend', chdrag,false);
+					}, 350);
+				}
+				mui('.nav-list').on('tap','li', tap_slide, false);
+				function tap_slide() {											// 点击 切换事件
+					sindex = this.getAttribute('data-index');
+					mui('.nav-list li').each(function() {
+						this.className = '';
+					});
+					this.className = 'list-blue';
+					if ( version ) {
+						slide_flag();
+						slider.gotoItem( sindex );
+					} else {
+						s_group.style.webkitTransform = "translate3d(-" + w * sindex + "px,0,0)";
+						s_group.style.transform = "translate3d(-" + w * sindex + "px,0,0)";
+					}
+					mui(".nav-active")[0].style.webkitTransform = "translate3d(" + 100 * sindex + "%,0,0)";
+					mui(".nav-active")[0].style.transform = "translate3d(" + 100 * sindex + "%,0,0)";
+				};
+				slide.addEventListener('slide', function(e) {					// 以最后的 slide 事件为准，调整div显示
+					if ( version ) {
+						drag_true();
+						var p = sindex;
+						mui('.nav-list li').each(function(){
+							this.className = '';
+						});
+						s_group.style.webkitTransform = "translate3d(-" + w * p + "px,0,0)";
+						s_group.style.transform = "translate3d(-" + w * p + "px,0,0)";
+						mui(".nav-active")[0].style.webkitTransform = "translate3d(" + 100 * p + "%,0,0)";
+						mui(".nav-active")[0].style.transform = "translate3d(" + 100 * p + "%,0,0)";
+						nav_li[p].className = 'list-blue';
+					}
+				});
+				slide.addEventListener('swipeleft', swipeleft, false); 			// 监听左右 滑动
+				slide.addEventListener('swiperight', swiperight ,false);
+				function swipeleft(e) {
+					e.stopPropagation();
+					sindex++;
+					if (sindex >= 3 ) {
+						sindex = 3;
+					} 
+					mui('.nav-list li').each(function(){
+						this.className = '';
+					});
+//					console.log('左滑'+sindex);
+					if ( version ) {
+						drag_false();
+						slider.gotoItem(sindex);
+						slide_flag();
+					} else {
+						s_group.style.webkitTransform = "translate3d(-" + w * sindex + "px,0,0)";
+						s_group.style.transform = "translate3d(-" + w * sindex + "px,0,0)";
+					}
+					nav_li[sindex].className = 'list-blue';
+					mui(".nav-active")[0].style.webkitTransform = "translate3d(" + 100 * sindex + "%,0,0)";
+					mui(".nav-active")[0].style.transform = "translate3d(" + 100 * sindex + "%,0,0)";
+				};
+				function swiperight(e) {
+					e.stopPropagation();
+					sindex--;
+					if (sindex <= 0 ) {
+						sindex = 0;
+					} 
+					mui('.nav-list li').each(function(){
+						this.className = '';
+					});
+//					console.log('右滑'+sindex);
+					if ( version ) {
+						drag_false();
+						slider.gotoItem(sindex);
+						slide_flag();
+					} else {
+						s_group.style.webkitTransform = "translate3d(-" + w * sindex + "px,0,0)";
+						s_group.style.transform = "translate3d(-" + w * sindex + "px,0,0)";
+					}
+					nav_li[sindex].className = 'list-blue';
+					mui(".nav-active")[0].style.webkitTransform = "translate3d(" + 100 * sindex + "%,0,0)";
+					mui(".nav-active")[0].style.transform = "translate3d(" + 100 * sindex + "%,0,0)";
+				};
+				if ( version ) {											// version <= 5 禁止动画
+					slide.addEventListener('touchstart',chstart,false);
+			        slide.addEventListener('touchmove',chmove,false);
+			        slide.addEventListener('touchend',chend,false);
+			        slide.addEventListener('dragend', chdrag,false);
+				}
+		        function drag_true(){
+					slide.addEventListener("dragend", chdrag, false);
+		        }
+		        function drag_false(){
+					slide.removeEventListener("dragend", chdrag, false);
+		        }
+		        function chdrag(e) {	// 覆盖原本的拖拽事件， 控制sindex
+		        	e.stopPropagation();
+		        	if (pull_flag){
+		        		return;
+		        	}
+		        	if ( (startX - endX)/360 >= 0.5) {  // ++
+		        		sindex++;
+		        		if (sindex >= 3 ) {
+							sindex = 3;
+						} 
+						slider.gotoItem(sindex);
+		        	}
+		        	if ( (startX - endX)/360 <= -0.5 ) {
+		        		sindex--;
+		        		if (sindex <= 0 ) {
+							sindex = 0;
+						} 
+		        		slider.gotoItem(sindex);
+		        	}
+//		        	console.log('拖拽'+sindex);
+		        	mui('.nav-list li').each(function(){
+						this.className = '';
+					});
+		        	nav_li[sindex].className = 'list-blue';
+		        	s_group.style.webkitTransform = "translate3d(-" + w * sindex + "px,0,0)";
+					s_group.style.transform = "translate3d(-" + w * sindex + "px,0,0)";
+		        	mui(".nav-active")[0].style.webkitTransform = "translate3d(" + 100 * sindex + "%,0,0)";
+		        	mui(".nav-active")[0].style.transform = "translate3d(" + 100 * sindex + "%,0,0)";
+					pull_flag = true;
+					slide_flag();
+		        };
+		        function chstart(ev){
+		        	pull_flag = false;
+		        	ev.preventDefault;
+		            var touch = ev.touches[0];
+		            startX = touch.pageX;
+		        }
+		        function chmove(ev){
+		        	ev.preventDefault;
+		            var touch = ev.touches[0];		
+		            endX = touch.pageX;
+		        }
+		        function chend(){    							// 避免切换时，点击页面，卡住
+		        	slider.gotoItem(sindex);
+//		        	console.log('触摸结束'+sindex);
+		        }
+				var createFragment = function( offsetnum, limitnum, test, index) {    //   index 值为  0，1,2,3
+					token = localstorage.getItem('token');
+					var categoryId = list_id[index];
+					var fragment = document.createDocumentFragment();
+					var li;
+					mui.ajax( mall_ip+'/api/v1/hdw/item/list',{
+						data:{
+							token: token,
+							categoryId: categoryId,
+							offset: offsetnum,
+							limit: limitnum
+						},
+						dataType:'json',
+						type:'post',
+						timeout:10000,          
+						success:function(data){
+//							console.log(JSON.stringify(data));
+							mui('.loading')[0].style.display = 'none';
+							if ( data.code == 0) {
+								var html = template('tmpl', data);
+								if ( test == 1 ) {
+									foods[index].innerHTML = '';
+									pull_all[index].refresh(true);
+								} else {
+									if ( data.data.length < 10 ) {
+										pull_all[index].endPullUpToRefresh(true);
+									}
+									mui.each(data.data, function() {
+										offset[index] = offset[index] + 1;
+									});
+								}
+								foods[index].innerHTML += html;
+								lazyImg.lazyLoad();
+							}
+						},
+						error:function(xhr,type,errorThrown){
+							plus.nativeUI.closeWaiting();
+//							console.log(type);
+						}
+					});
+				}
+				var ele = '.mui-slider-group .mui-scroll';
+				if ( !version ) {
+					ele = '.slider-group .mui-scroll';
+				}
+				mui.each(document.querySelectorAll( ele ), function(index, pullRefreshEl) {    // 修改一下分类id
+					pull_all[index] = mui(pullRefreshEl).pullToRefresh({
+						down: {
+							height: 100,
+							callback: function() {
+								var self = this;
+								if ( version ) {
+									slider.stopped = true;      				  // slider禁止滑动
+									mui('.nav-list').off('tap','li', tap_slide);  // 点击禁止滑动
+									slide.removeEventListener('swiperight', swiperight, false);  // 自定义右滑禁止滑动
+									slide.removeEventListener('swipeleft', swipeleft, false);
+									slide.removeEventListener('dragend', chdrag,false);			 // 自定义拖拽结束禁止右话
+								}
+								setTimeout(function() {
+									var down_len = 0;
+									if ( offset[index] >= 50 ) {
+										down_len = offset[index] = 50;
+									} else if ( offset[index] < 10 ) {
+										down_len = 10;
+									}
+									createFragment( 0, down_len, 1, index);  // offset limit up/down index;
+									self.endPullDownToRefresh();
+									if ( version ) {
+										slider.stopped = false;
+										mui('.nav-list').on('tap','li', tap_slide);
+										slide.addEventListener('swiperight', swiperight, false);
+										slide.addEventListener('swipeleft', swipeleft, false);
+										slide.addEventListener('dragend', chdrag,false);
+									}
+								}, 1000);
+							}
+						},
+						up: {
+							height: 75,
+							contentnomore: '没有更多商品了',
+							callback: function() {
+								var self = this;
+								if ( version ) {
+									slider.stopped = true;      // slider禁止滑动
+									mui('.nav-list').off('tap','li', tap_slide);  // 点击禁止滑动
+									slide.removeEventListener('swiperight', swiperight, false);  // 自定义右滑禁止滑动
+									slide.removeEventListener('swipeleft', swipeleft, false);
+									slide.removeEventListener('dragend', chdrag,false);			// 自定义拖拽结束禁止右话
+								}
+								setTimeout(function() {
+									createFragment(offset[index],limit[index],2,index);
+									self.endPullUpToRefresh();
+									if ( version ) {
+										slider.stopped = false;
+										mui('.nav-list').on('tap','li', tap_slide);
+										slide.addEventListener('swiperight', swiperight, false);
+										slide.addEventListener('swipeleft', swipeleft, false);
+										slide.addEventListener('dragend', chdrag,false);
+									}
+								}, 600);
+							}
+						}
+					});
+				});
+				function mall_list() {
+					list_title = JSON.parse(localstorage.getItem('mall-list-title'));
+					list_id = JSON.parse(localstorage.getItem('mall-list-id'));
+					if ( list_title == null && localstorage.getItem('token') == null ) {
+						setTimeout( function() {
+							mall_list();
+						}, 59);
+					} else {
+						if (mui.os.ios) {
+							setTimeout(function() {
+								plus.navigator.closeSplashscreen();					// 初始化页面关闭；
+							}, 100)
+						} else {
+							plus.navigator.closeSplashscreen();
+						}
+
+						mui('.nav-list li').each(function(index) {
+							this.innerHTML = list_title[index];
+						});
+						setTimeout(function(){
+							first_ajax = 1;
+							for( var i = 0; i < 4; i++ ) {
+								createFragment( 0, 10, 2, i);
+							}
+						}, 2000);
+					}
+				}
+				if ( network_flag ) {
+					if ( localstorage.getItem('loginFlag') == 'true' ) {
+						mall_list();
+					}
+				} else {
+					first_ajax = 1;
+					setTimeout(function() {
+						plus.navigator.closeSplashscreen();					// 初始化页面关闭；
+						plus.navigator.setFullscreen(false);
+					},1000);
+				}
+				window.addEventListener('quit-init-mall', function(event) {
+					offset = [0,0,0,0];
+					limit = [10,10,10,10];
+					for ( var i = 0; i < nav_li.length; i++ ) {  
+						mui('.mui-scroll-wrapper').scroll()[i].scrollTo(0,1,1);
+						foods[i].innerHTML = '';
+					}
+					mui('.nav-list li').each(function() {
+						this.className = '';
+					});
+					sindex = 0;
+					nav_li[sindex].className = 'list-blue';
+					mui(".nav-active")[0].style.webkitTransform = "translate3d(" + 100 * sindex + "%,0,0)";
+					mui(".nav-active")[0].style.transform = "translate3d(" + 100 * sindex + "%,0,0)";
+					if ( version ) {
+						slider.gotoItem(sindex);
+					} else {
+						s_group.style.webkitTransform = "translate3d(-" + w * sindex + "px,0,0)";
+						s_group.style.transform = "translate3d(-" + w * sindex + "px,0,0)";
+					}
+				})
+				window.addEventListener('network', function(event){
+					wainshow();
+				});
+				window.addEventListener('mall', function(event) {  // 登录 /关闭定时器 /main监听init getList/network,重新加载;
+					if ( first_ajax != 0 ) {
+						mall_list();
+					}
+				})
+			});
+			
+			mui('.foods').on('tap','li',function() {
+				wainshow();
+				if ( !network_flag ) {
+					mui.toast('当前网络不给力，请稍后再试');
+					return;
+				}
+				plus.nativeUI.showWaiting('正在加载...',{
+					loading:{
+						display: 'inline'
+					}
+				});
+				var goodsId = this.getAttribute('data-id');
+				mui.openWindow({
+					id: 'mall-details.html',
+					url: 'mall-details.html',
+					show: {
+						aniShow: 'slide-in-right',
+						duration: 200
+					},
+					styles: {
+						popGesture: 'close'
+					},
+					waiting: {
+						autoShow: false
+					},
+					extras:{
+						goodsId: goodsId
+					}
+				});
+			})
+		</script>
+	</body>
+</html>

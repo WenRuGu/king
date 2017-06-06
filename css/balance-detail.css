@@ -1,0 +1,125 @@
+html,body{
+	width: 100%;
+}
+body{
+	background: #f5f5f5;
+}
+a{
+	color: #333;
+}
+.mui-bar{
+	background: #fff;
+	z-index: 99;
+}
+p{
+	margin-bottom: 0;
+}
+.balance-ul{
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	background: #fff;
+}
+.balance-ul li{
+	width: 100%;
+	height: 1.26rem;
+	padding:0 0.3rem;
+	border-bottom: 1px solid #ECECEC;
+}
+.detail{
+	float: left;
+	width: 65%;
+	height: 1.26rem;
+}
+.mui-ellipsis{
+	font-size: 0.3rem;
+	color: #333;
+	margin-top: 0.2rem;
+}
+.time{
+	font-size: 0.26rem;
+	color:#888;
+}
+.money{
+	width: 35%;
+	float: left;
+	height: 1.26rem;
+	line-height: 1.26rem;
+	font-size: 0.4rem;
+	text-align: right;
+	color: #333;
+}
+.blue{
+	color: #38f;
+}
+.mui-bar~.mui-content .mui-fullscreen {
+	top: 44px;
+	height: auto;
+}
+
+.mui-pull-top-tips {
+	position: absolute;
+	top: -20px;
+	left: 50%;
+	margin-left: -20px;
+	width: 40px;
+	height: 40px;
+	border-radius: 100%;
+	z-index: 1005;
+}
+.mui-bar~.mui-pull-top-tips {
+	top: 24px;
+	z-index: 98;
+}
+.mui-pull-top-wrapper {
+	width: 42px;
+	height: 42px;
+	display: block;
+	text-align: center;
+	background-color: #efeff4;
+	border: 1px solid #ddd;
+	border-radius: 25px;
+	background-clip: padding-box;
+	box-shadow: 0 4px 10px #bbb;
+	overflow: hidden;
+}
+.mui-pull-top-tips.mui-transitioning {
+	-webkit-transition-duration: 200ms;
+	transition-duration: 200ms;
+}
+.mui-pull-top-tips .mui-pull-loading {
+	/*-webkit-backface-visibility: hidden;
+	-webkit-transition-duration: 400ms;
+	transition-duration: 400ms;*/
+	
+	margin: 0;
+}
+.mui-pull-top-wrapper .mui-icon,
+.mui-pull-top-wrapper .mui-spinner {
+	margin-top: 7px;
+}
+.mui-pull-top-wrapper .mui-icon.mui-reverse {
+	/*-webkit-transform: rotate(180deg) translateZ(0);*/
+}
+.mui-pull-bottom-tips {
+	text-align: center;
+	background-color: #f5f5f5;
+	font-size: 15px;
+	line-height: 40px;
+	color: #777;
+}
+.mui-pull-top-canvas {
+	overflow: hidden;
+	background-color: #fafafa;
+	border-radius: 40px;
+	box-shadow: 0 4px 10px #bbb;
+	width: 40px;
+	height: 40px;
+	margin: 0 auto;
+}
+.mui-pull-top-canvas canvas {
+	width: 40px;
+}
+.mui-slider-indicator.mui-segmented-control {
+	background-color: #efeff4;
+}

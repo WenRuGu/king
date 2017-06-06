@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<!--<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">-->
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="../css/moverescue.css"/>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">移动救援</h1>
+		</header>
+		<div class="mui-content">
+			<div id="slider" class="mui-slider mui-fullscreen">
+				<div class="mui-slider-group">
+					<div id="scroll1" class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<ul class="mui-table-view mui-table-view-chevron">
+							   	<!--<li class="mui-table-view-cell mui-media mui-collapse">
+							        <a href="javascript:;" class="list-card">
+							            <img class="mui-media-object mui-pull-left car-pic" src="../img/car-pic.png">
+							            <div class="mui-media-body">
+							            	<p class="info-p">
+							            		<span class="mui-pull-left">刘师傅</span>
+							            		<span class="star"></span>
+							            		<span class="mui-pull-right">2.4km</span>
+							            	</p>
+							                <p class='call-phone'>5293534</p>
+							                <p class='mui-ellipsis'>电话号码？</p>
+							            </div>
+							        </a>
+							        <div class="mui-collapse-content">
+							        	<button type="button" class="msg-btn">发短信</button>
+							        	<button type="button" class="call">打电话</button>
+									</div>
+							    </li>-->
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script src="../js/mui.pullToRefresh.js"></script>
+		<script src="../js/mui.pullToRefresh.material.js"></script>
+		<script src="../js/template.js"></script>
+		<script src="../js/common.js"></script>
+		<script id="tmpl" type="text/html">
+		{{each data as item i}}
+			 <li class="mui-table-view-cell mui-media mui-collapse">
+		        <a href="javascript:;" class="list-card">
+		            <img class="mui-media-object mui-pull-left car-pic lazy" data-src='{{item.imagePath}}' src='../img/car-pic.png'>
+		            <div class="mui-media-body">
+		            	<p class="info-p">
+		            		<span class="mui-pull-left">{{item.rescuerName}}</span>
+		            		<span class="star star-{{item.star}}"></span>
+		            		<span class="mui-pull-right">{{ item.distance | km }}km</span>
+		            	</p>
+		                <p class='call-phone'>{{item.tel}}</p>
+		                <p class='mui-ellipsis'>{{item.serviceContent}}</p>
+		            </div>
+		        </a>
+		        <div class="mui-collapse-content">
+		        	<button type="button" class="msg-btn">发短信</button>
+		        	<button type="button" class="call">打电话</button>
+				</div>
+		    </li>
+		{{/each}}
+		</script>
+		<script>
+			mui.init();
+			(function($) {
+				//阻尼系数
+				var deceleration = mui.os.ios?0.003:0.0009;
+				var pageNo = 0;
+				var pageSize = 10;
+				var posi;
+				var token;
+				var localstorage = window.localStorage; 
+				var rescue_ip = localstorage.getItem('ip');
+				var rescue_ul = document.getElementsByClassName('mui-table-view')[0];
+				$('.mui-scroll-wrapper').scroll({
+					indicators: true,
+					deceleration:deceleration,
+					bounce: false
+				});
+				var pull;
+				var network_flag = true;
+				$.plusReady(function() {
+					var place = localstorage.getItem('place') || '';
+					function wainshow() {
+					    if (plus.networkinfo.getCurrentType() == plus.networkinfo.CONNECTION_NONE) {
+					    	mui.toast('网络异常，请重新设置网络');	
+					    	network_flag = false;
+					    } else {
+					    	network_flag = true;
+					    }
+					}
+					pull = $('.mui-slider-group .mui-scroll').pullToRefresh({
+						down: {
+							height: 75,
+							callback: function() {
+								var self = this;
+								pageNo = 0;
+								self.refresh(true);
+								setTimeout(function() {
+									createFragment();
+									self.endPullDownToRefresh();
+								}, 1000);
+							}
+						},
+						up: {
+							auto:true,
+							height: 75,
+							contentnomore: '没有更多救援信息了',
+							callback: function() {
+								var self = this;
+//								wainshow();
+//								if ( !network_flag ) {
+//									self.setStopped(true);
+//									return;
+//								}
+								setTimeout(function() {
+									createFragment();
+									self.endPullUpToRefresh();
+								}, 1000);
+							}
+						}
+					});
+					template.helper('km', function( km ) {
+						return (km/1000).toFixed(2);
+					})
+					var createFragment = function() {
+						token = localstorage.getItem('token');
+						var lng = localstorage.getItem('lng');
+						var lat = localstorage.getItem('lat');
+//						console.log(lng+','+lat);
+						var fragment = document.createDocumentFragment();
+//						console.log(offsetnum+','+limitnum)
+						mui.ajax( rescue_ip +'/api/v1/hdw/rescuer/list',{
+							data:{
+								token: token,
+								lng: lng,
+								lat: lat,
+								offset: pageNo * pageSize,
+								limit: pageSize
+							},
+							dataType:'json',
+							type:'post',
+							timeout:5000,
+							success:function(data){
+//								console.log(JSON.stringify(data));
+								if (data.code == 0) {
+									var html = template( 'tmpl', data);
+									if ( pageNo == 0 ) {                      // 请求（原有的数量） 偏移量不做改变
+										rescue_ul.innerHTML = '';
+									} 
+									pageNo++;
+									if ( data.data.length < 10 ) {
+										pull.endPullUpToRefresh(true);
+									}
+									rescue_ul.innerHTML += html;
+									lazyImg.lazyLoad();
+								}
+							},
+							error:function(xhr,type,errorThrown){
+								console.log(type);
+								var li_len = rescue_ul.querySelectorAll('li');
+								if ( li_len.length < 1 ) {
+								    pull.disablePullupToRefresh();
+								}
+								plus.nativeUI.alert('加载救援信息失败，请稍后查询');
+							}
+						});
+					};
+					$('.mui-table-view').on('tap', '.call',function() {
+						var li = this.parentNode.parentNode;
+						var call = li.getElementsByClassName('call-phone')[0];
+						plus.device.dial(call.innerHTML);
+					} );
+					$('.mui-table-view').on('tap', '.msg-btn',function() {
+						var li = this.parentNode.parentNode;
+						var call = li.getElementsByClassName('call-phone')[0];
+						var address = '';
+						posi = plus.geolocation.getCurrentPosition( function ( p ) {
+							address = p.addresses;
+						}, function ( e ) {
+							mui.toast('请在设置中开启定位权限');
+						},{enableHighAccuracy: true});
+						function sendMsg() {
+							var msg = plus.messaging.createMessage(plus.messaging.TYPE_SMS);
+							msg.to = [ call.innerHTML];
+							if ( address != '' || address != undefined) {            //  h5+ 地理位置信息
+								msg.body = '您好！我的车出现了些问题，需要您来救援，我的位置在'+ address +'，谢谢。';
+							} else {						// 百度地理位置信息
+								msg.body = '您好！我的车出现了些问题，需要您来救援，我的位置在1'+ place +'，谢谢。';
+							}
+							
+							plus.messaging.sendMessage( msg );
+						}
+						plus.nativeUI.confirm('确认发送当前你的位置信息？',function(e) {
+							if ( e.index == 0 ) {
+								setTimeout(function() {
+									sendMsg();
+								},10)
+							}
+						}, '提示',['发送','取消']);
+					} )
+				});
+			})(mui);
+		</script>
+	</body>
+</html>

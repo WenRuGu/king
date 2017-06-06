@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<style>
+			body{
+				background: #FEFEFE;
+			}
+			.mui-bar{
+				background: #fff;
+			}
+			.mui-bar a{
+				color: #333;
+			}
+			.change-box{
+				margin-top: 50px;
+				padding: 0 5%;
+			}
+			.change-box .change-ipt{
+				border: none;
+				border-radius: 0;
+				border-bottom: 0.02rem solid #38f;
+			}
+			.mui-bar .mui-btn{
+				padding:0;
+				-webkit-transition: none;	
+				transition: none;
+				
+				border: none;
+			}
+			.mui-btn-primary{
+				width: 40px;
+				height: 28px;
+				text-align: center;
+				border: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">更改名字</h1>
+			<button type="button" class="mui-btn mui-btn-primary mui-pull-right" disabled="disabled">保存</button>
+		    
+		</header>
+		<div class="change-box">
+			<input class="change-ipt" type="text" value=""/>
+			<p>真实姓名永远都是最真诚的你</p>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			var localstorage = window.localStorage;  
+			var change_name = document.getElementsByClassName('change-ipt')[0];
+			var keep = document.getElementsByClassName('mui-btn-primary')[0];
+			var token;
+			var real_ip = localstorage.getItem('ip');
+			
+			mui.plusReady(function() {
+				var self = plus.webview.currentWebview();
+				change_name.value = localstorage.getItem('realName');
+
+				change_name.addEventListener('input', function() {
+					if ( change_name.value == localstorage.getItem('realName') || change_name.value == '' ) {
+						keep.setAttribute('disabled','disabled');
+					} else {
+						keep.disabled = false;
+						var maxChars = 20; 				// 限制输入字符
+						if (change_name.value.length > maxChars ) {
+							change_name.value = change_name.value.substring(0,maxChars);
+							mui.toast('输入字数超出20字');
+							return false;
+						}
+					}
+				});
+				keep.addEventListener('tap', function() {
+					token = localstorage.getItem('token'); 
+					var task = plus.uploader.createUpload(real_ip+'/api/v1/basic/customer/update_info', {
+						method: 'post', 
+						blocksize:204800,
+						timeout: 10
+					},stateChanged);
+					task.addData('realName', change_name.value);
+					task.addData('token', token);
+					task.start();
+					function stateChanged(upload, status) {
+						if ( upload.state == 4 && status == 200 ) {
+							plus.uploader.clear(); //清除上传
+							localstorage.setItem('realName',change_name.value);
+							console.log(upload.responseText); //服务器返回存在这里
+							plus.nativeUI.toast('修改成功');
+							mui.fire(plus.webview.getWebviewById('personal-info.html'),'personal-info',{
+								info:true
+							});
+							mui.fire(plus.webview.getWebviewById('pages/tab-webview-subpage-setting.html'),'update-info',{
+								info:true
+							});
+							setTimeout(function() {
+								plus.webview.close(self);
+							}, 500)
+							
+						} else {
+							plus.nativeUI.alert('更改失败',function() {},'','确定');
+						}
+					}
+				})
+			});
+		</script>
+	</body>
+
+</html>

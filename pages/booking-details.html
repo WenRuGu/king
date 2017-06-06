@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/swiper.min.css"/>
+		<link rel="stylesheet" href="../css/booking-details.css" />
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">预约信息</h1>
+		</header>
+		<div class="mui-scroll-wrapper">
+			<div class="mui-scroll">
+				 <div class="swiper-container">
+					<img class="only-pic" src="">
+			        <div class="swiper-wrapper">
+			        </div>
+			        <div class="swiper-pagination"></div>
+			   </div>
+				<div class="point-details">
+					<p>
+						<span class="mui-pull-left site mui-ellipsis"></span>
+						<span class="mui-pull-right distance"></span>
+					</p>
+					<p class="openTime"></p>
+					<p class="freePoint">空闲：
+						<span class="space">0</span>
+						个
+					</p>
+				</div>
+				<div class="expense">
+					<h4>温馨提示</h4>
+					<p>1、余额支付，优先使用换电余额</p>
+					<p>2、预约过后，可以在未付款订单中支付换电订单</p>
+				</div>
+				<div class="sel">
+					<p class="sel-p">预约资费</p>
+					<!--<div class="priceBox">
+						<p>20元</p>
+						<p>预约3小时</p>
+						<span class=""></span>
+					</div>-->
+				</div>
+				<div class="payment">
+					<p>支付方式</p>
+					<div id="balance" class="payment-active">
+						余额
+						<span class="superscript-show"></span>
+					</div>
+					<div id="weixin" class="">
+						微信
+						<span class=""></span>
+					</div>
+					<div id="alipay" class="">
+						支付宝
+						<span class=""></span>
+					</div>
+				</div>
+			<button type="button" class="pay mui-btn mui-btn-primary">立即付款</button>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script src="../js/swiper.min.js"></script>
+		<script src="../js/booking-details.js"></script>
+	</body>
+
+</html>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/personal-info.css"/>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">个人信息</h1>
+		</header>
+		<ul class="mui-table-view">
+			<li class="mui-table-view-cell">
+				<a id="head" class="mui-navigate-right">
+					<span class="mui-pull-left portrait">头像</span>
+					<span class="mui-pull-right user-pic-span">
+						<img class="user-pic lazy" src="../img/default-user.png" data-preview-src="" data-preview-group="1"/>
+					</span>
+				</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a class="mui-navigate-right change-nickname">
+					昵称
+					<span class="mui-pull-right nickname mui-ellipsis"></span>
+				</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a class="mui-navigate-right change-realName">
+					真实姓名
+					<span class="mui-pull-right realName mui-ellipsis"></span>
+				</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a href="#sex-popover" class="mui-navigate-right sel-sex">
+					性别
+					<span class="mui-pull-right sex"></span>
+				</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a class="mui-navigate-right change-mobile">
+					手机号
+					<span class="mui-pull-right phone"></span>
+				</a>
+			</li>
+			<li class="mui-table-view-cell">
+				<a class="mui-navigate-right change-psw">
+					修改密码
+					<span class="mui-pull-right">******</span>
+				</a>
+			</li>
+		</ul>
+		<div class="quit mui-table-view-cell ">
+				退出登录
+		</div>
+		<!--<div id="black-box" class="mui-popover">-->
+			<div id="black-box" class="sel-s mui-popover">
+				<p>性别</p>
+				<div class="mui-input-row mui-checkbox">
+				  <label>男</label>
+				  <input class="man" name="checkbox1" value="Item 1" type="checkbox">
+				</div>
+				<div class="mui-input-row mui-checkbox">
+				  <label>女</label>
+				  <input class="woman" name="2" value="Item 1" type="checkbox">
+				</div>
+			</div>
+		<!--</div>-->
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script src="../js/popover.js"></script>
+		<script src="../js/mui.zoom.js"></script>
+		<script src="../js/mui.previewimage.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/personal-info.js"></script>
+	</body>
+</html>

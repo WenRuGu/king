@@ -1,0 +1,228 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/style.css"/>
+		<style>
+			body{
+				background: #f5f5f5;
+			}
+			a{
+				color: #333;
+			}
+			.mui-bar{
+				background: #fff;
+				z-index: 9999;
+			}
+			.mui-scroll {
+			    min-height: 4rem;
+			}
+			.mui-table-view img{
+				border-radius: 50%;
+			}
+			.mui-table-view-cell{
+				position: relative;
+			}
+			.msg-p-title{
+				color: #333;
+				font-size: 0.32rem;
+			}
+			.msg-p-title span.mui-pull-right{
+				color: #888;
+				font-size: 0.24rem;
+			}
+			.mui-ellipsis{
+				font-size: 0.28rem;
+				width: 85%;
+			}
+			.msg-pormpt{
+				position: absolute;
+				display: block;
+				width: 8px;
+				height: 8px;
+				border-radius: 50%;
+				left: 52px;
+				top: 10px;
+				background: #FF4500;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">消息</h1>
+		</header>
+		<div class="mui-content">
+			<div id="slider" class="mui-slider mui-fullscreen">
+				<div class="mui-slider-group">
+					<div id="scroll1" class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<ul class="mui-table-view">
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>				
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script src="../js/mui.pullToRefresh.js"></script>
+		<script src="../js/mui.pullToRefresh.material.js"></script>
+		<script src="../js/common.js"></script>
+		<script src="../js/template.js"></script>
+		<script id="tmpl" type="text/html">
+		{{each data as item i}}
+			<li class="mui-table-view-cell mui-media" data-id='{{item.id}}'>
+		        <a href="javascript:;">
+		            <img class="mui-media-object mui-pull-left lazy" data-src='{{item.logoUrl}}' src="../img/mall-default-3.jpg">
+		            <div class="mui-media-body">
+		               	<p class="msg-p-title"><span class="mui-pull-left">{{item.title}}</span><span class="mui-pull-right">{{item.handleTime | time : item.handleTime}}</span></p>
+		                <p class='mui-ellipsis'>{{item.text}}</p>
+		            </div>
+		        </a>
+		    </li>
+		{{/each}}
+		</script>
+		<script type="text/javascript">
+			(function($, doc){
+				$.init();
+				var p = doc.getElementsByClassName('msg-p-title')[0];
+				var new_ul = doc.getElementsByClassName('mui-table-view')[0];
+				var deceleration = mui.os.ios?0.003:0.0009;
+				var localstorage = window.localStorage; 
+				var new_ip = localstorage.getItem('ip');
+				var pull;
+				var pageNo = 0;
+				var pageSize = 10;
+				var token;
+				var nowTime = new Date().getTime();
+				$('.mui-scroll-wrapper').scroll({
+					bounce: false,
+					indicators: true, 
+					deceleration:deceleration
+				});
+				$.plusReady(function() {
+					function wainshow() {
+					    if (plus.networkinfo.getCurrentType() == plus.networkinfo.CONNECTION_NONE) {
+							mui.toast('网络异常，请检查网络状况');
+					    } 
+					}
+					wainshow();
+					$.fire(plus.webview.getLaunchWebview(),'msg-old', { news: false });  // main.js 取消小红点
+					var pull = $('.mui-slider-group .mui-scroll').pullToRefresh({
+						down: {
+							height: 50,
+							callback: function() {
+								var self = this;
+								self.refresh(true);
+								pageNo = 0;
+								setTimeout(function() {
+									createFragment();
+									self.endPullDownToRefresh();
+								}, 1000);
+							}
+						},
+						up: {
+							contentnomore: '没有更多消息了',
+							callback: function() {
+								var self = this;
+								setTimeout(function() {
+									createFragment();
+									self.endPullUpToRefresh();
+								}, 1000);
+							}
+						}
+					});
+					pull.pullUpLoading();
+					template.helper('time', function(m) {
+				        var minutes = 1000 * 60;  
+				        var hour = minutes * 60;
+				        var day = hour * 24;
+				        var week = day * 7;
+				        var halfamonth = day * 15;
+				        var month = day * 30;
+				    
+				        var  now = new Date().getTime();    // 获取当前时间毫秒
+				        var diffValue = now - m;			// 时间差
+				      
+				        if ( diffValue < 0 ) { return; }
+						// 计算时间差的分，时，天，周，月
+				        var  minC = diffValue/minutes;  	
+				        var  hourC = diffValue/hour;
+				        var  dayC = diffValue/day;
+		       			var  weekC = diffValue/week;      
+		        		var  monthC = diffValue/month;
+//						console.log(minC +','+hourC +','+dayC +','+weekC +','+monthC)
+		       			if ( minC < 1) {
+		       				result = "刚刚";
+		       			} else if (minC >= 1 && minC <= 60){
+		         			result = " " + parseInt( minC ) + "分钟前";
+		          		} else if ( hourC >=1 && hourC <= 24 ) {
+		         			result = " " + parseInt( hourC ) + "小时前";
+		          		} else if ( dayC >= 1 && dayC <= 3 ) {
+					        result = " " + parseInt( dayC ) + "天前";
+					    } else {
+					    	var sendTime = new Date( m );
+					    	result = sendTime.getFullYear() + "/" + (sendTime.getMonth() + 1) + "/" + sendTime.getDate();
+					    }
+						return result;
+					});
+					var createFragment = function() {
+						var fragment = document.createDocumentFragment();
+						var li;
+						token = localstorage.getItem('token');
+						mui.post( new_ip +'/api/v1/basic/push_message/list',{
+								token: token,
+								offset: pageNo * pageSize,
+								limit: pageSize
+						},function(data){
+//							console.log(JSON.stringify(data));
+								if ( data.code == 0 ) {
+									var html = template('tmpl', data);
+									if ( pageNo == 0 ) {
+										new_ul.innerHTML = '';
+									} 
+									pageNo++;
+									if ( data.data.length < 10 ) {
+										pull.endPullUpToRefresh(true);
+									}
+									new_ul.innerHTML += html;
+									lazyImg.lazyLoad();
+								}
+							},'json'
+						);
+					};
+					$('.mui-table-view').on('tap', '.mui-table-view-cell', function() {
+						var title = this.querySelector('.mui-media-body .mui-pull-left').innerHTML;
+						var create_time = this.querySelector('.mui-media-body .mui-pull-right').innerHTML;
+						var content = this.querySelector('.mui-media-body .mui-ellipsis').innerHTML;
+						$.openWindow({
+							url:"news-details.html",
+							id: 'news-details.html',
+							show:{
+								aniShow: 'slide-in-right'
+							},
+							waiting: {
+								autoShow: false
+							},
+							styles: {
+								popGesture: 'close'
+							},
+							extras: {
+								title: title,
+								create_time: create_time,
+								content: content
+							}
+						});
+					})	
+				})
+			}(mui, document))
+		</script>
+	</body>
+
+</html>

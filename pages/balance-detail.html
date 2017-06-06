@@ -1,0 +1,142 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/balance-detail.css"/>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">余额明细</h1>
+		</header>
+		<div class="mui-content">
+			<div id="slider" class="mui-slider mui-fullscreen">
+				<div class="mui-slider-group">
+					<div id="scroll1" class="mui-scroll-wrapper">
+						<div class="mui-scroll">
+							<ul class="balance-ul">
+								<!--<li>
+									<div class="detail">
+										<p class="mui-ellipsis">换电消费换电消费换电消费换电消费</p>
+										<p class="time">2017-03-05 14:23:12</p>
+									</div>
+									<span class="money">-10000000.00</span>
+								</li>-->
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>				
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script src="../js/mui.pullToRefresh.js"></script>
+		<script src="../js/mui.pullToRefresh.material.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			(function($) {
+				//阻尼系数
+				var deceleration = mui.os.ios?0.003:0.0009;
+				$('.mui-scroll-wrapper').scroll({
+					bounce: false,
+					indicators: true, //是否显示滚动条
+					deceleration:deceleration
+				});
+				var localstorage = window.localStorage;
+				var ba_de_ip = localstorage.getItem('ip');
+				var balance_ul = document.getElementsByClassName('balance-ul')[0];
+				var token;
+				var offset = 0;
+				var limit = 10;
+				var ul = document.querySelector('.mui-table-view');
+				$.plusReady(function() {
+						var createFragment = function( offsetnum, limitnum, test, self) {
+							token = localstorage.getItem('token');
+							var fragment = document.createDocumentFragment();
+							mui.ajax( ba_de_ip+'/api/v1/basic/customer/in_out_money/list',{
+								data:{
+									token:token,
+									offset: offsetnum,
+									limit: limitnum
+								},
+								dataType:'json',
+								type:'post',
+								timeout:10000,    
+								success:function(data){
+									console.log(JSON.stringify(data));
+									if ( data.code == 0) {
+										var li;
+										$.each( data.data, function(index, item) {
+											li = document.createElement('li');
+											var money_sel;
+											var money_class = '';
+											if ( item.money*1 > 0 ) {
+												money_sel = "+"+item.money;
+												money_class = 'money blue';   // +钱蓝色
+											} else {
+												money_sel = item.money;
+												money_class = 'money';		  // 付款黑色
+											}
+											li.innerHTML = '<div class="detail">'
+												+ '<p class="mui-ellipsis">'+ item.bizTypeName +'</p>'
+												+ '<p class="time">'+ item.createTime +'</p></div>'
+												+ '<span class="'+ money_class +'">'+ money_sel +'</span>';
+											fragment.appendChild(li);
+											offset++;
+										});
+										// 增加偏移量
+										if ( test == 1 ) {
+											balance_ul.innerHTML = '';
+											balance_ul.insertBefore(fragment ,balance_ul.firstChild);
+											self.refresh(true);			//  第一次不运行，报错终止，但是有用，加入以上一句。
+										} else { 
+											if ( data.data.length == 0 ) {
+												self.endPullUpToRefresh(true);
+											}
+										}
+										balance_ul.appendChild(fragment);
+									}
+								},
+								error:function(xhr,type,errorThrown){
+//									console.log(type);
+									plus.nativeUI.alert('查询余额明细失败，请稍后查询');
+								}
+							});
+						};
+//					createFragment(0,limit,1);
+					//循环初始化所有下拉刷新，上拉加载。
+					$.each(document.querySelectorAll('.mui-slider-group .mui-scroll'), function(index, pullRefreshEl) {
+						$(pullRefreshEl).pullToRefresh({
+							down: {
+								height: 50,
+								callback: function() {
+									var self = this;
+									setTimeout(function() {
+										createFragment(0,offset,1, self);     // 下拉请求当前的 数据量
+										self.endPullDownToRefresh();
+									}, 1000);
+								}
+							},
+							up: {
+								auto:true,
+								callback: function() {
+									var self = this;
+									setTimeout(function() {
+										createFragment(offset,limit,2, self);
+										self.endPullUpToRefresh();
+									}, 1000);
+								}
+							}
+						});
+					});
+				});
+			})(mui);
+		</script>
+	</body>
+
+</html>

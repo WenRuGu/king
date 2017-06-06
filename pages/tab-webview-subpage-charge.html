@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="../css/style.css"/>
+		<link rel="stylesheet" href="../css/iconfont.css" />
+		<link rel="stylesheet" type="text/css" href="../css/charge-sub.css"/>
+		<script src="http://api.map.baidu.com/api?v=2.0&ak=qxRPVsSUD3OOsPNczFLYtKPIo4xws2Wk" type="text/javascript"></script>
+	</head>
+	<body>
+		<div class="map-box">
+			<div id="map"></div>
+			<p class="map-p">附近的换电站</p>
+			<div class="status">
+				<span>空闲</span>
+				<span>占满</span>
+				<span>故障</span>
+			</div>
+			<div class="sel-scope">附近5公里</div>
+			<ul class="sel-ul">
+				<li>附近5公里</li>
+				<li>附近10公里</li>
+				<li>附近50公里</li>
+				<li>全部</li>
+			</ul>
+			<a class="my-leo">
+				<span class="mui-icon iconfont icon-dingwei1"></span>
+			</a>
+			<span class="my-address mui-ellipsis-2"></span>
+		</div>
+	</body>
+	<script src="../js/mui.min.js"></script>
+	<script src="../js/style-size.js"></script>
+	<script type="text/javascript">
+			mui.init();
+			var aaa = new Date().getTime();
+			var bbb;
+			var _self;
+			var charge_sub_style = {
+				top: '310px',						
+				bottom: "0px",
+				zindex: 99
+			}
+			function $c(id) {
+				return document.getElementsByClassName(id)[0];
+			}
+			var title = $c('map-p');
+			var my_leo = $c('my-leo');
+			var map_p = $c('map-p');
+			var my_address = $c('my-address');
+			var three_status = $c('status');
+			var map_box = $c('map-box');
+			var sel_scope = $c('sel-scope');
+			var width = document.documentElement.clientWidth || document.body.clientWidth || window.screen.width || localstorage.getItem('width');;
+			var range_onOff = true;
+			
+			var token;
+			var localstorage = window.localStorage;
+//			var leo_ip = 'http://192.9.198.241:8080';
+			var leo_ip = 'http://hd.yusong.com.cn:5180';
+			var place = '';                    // 存储的地址
+			var my_point;                      // 我的坐标
+			var distance = 0;				   // 距离
+			var icons = [];                    // 空闲图标组
+			var map;						   // 地图
+			var use_icon;					   // 全部使用
+			var fault_icon;					   // 故障
+			var geolocation;
+			var convertor;					   // 坐标转换
+			var opts;
+			var pointArr = [];				   // 坐标转换数组
+			var network_flag = true;    	   // true 网络正常
+			var map_flag = false;	
+			var leo = true;
+			var first = 0;
+			localstorage.getItem('width', width);
+			function wainshow() {
+			    if (plus.networkinfo.getCurrentType() == plus.networkinfo.CONNECTION_NONE) {
+			    	network_flag = false;
+			    } else {
+					network_flag = true;
+			    }
+			}
+			function loadJScript() {
+				var script = document.createElement("script");
+				script.type = "text/javascript";
+				script.src = "http://api.map.baidu.com/api?v=2.0&ak=qxRPVsSUD3OOsPNczFLYtKPIo4xws2Wk&callback=init";
+				document.body.appendChild(script);
+			}
+			function init(){
+				map = new BMap.Map("map"); // 创建地图实例 
+				map_flag = true;
+				sel_scope.style.display = 'block';
+				my_leo.style.display = 'block';
+				three_status.style.display = 'block';
+				opts = { 	offset: new BMap.Size( width-40,60),
+							type: BMAP_NAVIGATION_CONTROL_ZOOM,
+							setZoom: 10
+						};
+				geolocation = new BMap.Geolocation();
+				map.addControl(new BMap.NavigationControl(opts));  // +- 比例
+				fault_icon = new BMap.Icon("../img/fault.png",     // 故障的图标
+		                        new BMap.Size(22, 25),{ 
+		                        	anchor: new BMap.Size(11,25),
+		                        	imageSize: new BMap.Size(22,25)
+		                        }
+		                    );
+	            use_icon = new BMap.Icon("../img/useing.png",     // 无空闲的图标
+		                        new BMap.Size(22, 25),{           // 显示区域的大小
+		                        	anchor: new BMap.Size(11,25), // 偏移值 
+		                            imageSize: new BMap.Size(22,25)      // 图标的大小
+	                            } 
+	                        );
+	            my_icon = new BMap.Icon("../img/my-icon.png",     // 我的图标
+		                        new BMap.Size(14, 14),{
+		                        	anchor: new BMap.Size(7,7),
+		                            imageSize: new BMap.Size(14,14)
+	                            } 
+	                        );
+				for ( var i = 0; i < 15; i++ ) {
+					icons[i] = new BMap.Icon("../img/g-" + i + ".png", 
+						new BMap.Size(22,25),{ 
+							anchor: new BMap.Size(11,25),
+							imageSize: new BMap.Size(22,25)
+						});
+				}
+				convertor = new BMap.Convertor();          		//初始化，Geocoder类
+			}
+			mui.plusReady(function() {
+				wainshow();
+				_self = plus.webview.currentWebview();
+				_self.setStyle({ scrollIndicator:'none' });     //隐藏原生滚动条
+				var sup = plus.webview.create('charge-sub.html','pages/charge-sub.html',charge_sub_style);
+				sup.show();
+				_self.append(sup);
+				function addMarker(point, icon, posId){                         //添加点坐标
+					var marker = new BMap.Marker(point,{ icon:icon});
+					marker.id = posId;
+					marker.addEventListener('click', function() {				// 添加点击事件
+						wainshow();
+						if ( !network_flag ) {
+							mui.toast('当前网络不给力，请稍后再试');
+							return;
+						}
+						mui.openWindow({
+							id: 'booking-details.html',
+							url: 'booking-details.html',
+							styles: {
+								popGesture: 'close'
+							},
+							show: {
+								aniShow: 'pop-in'
+							},
+							extras: {
+								cabinetId: this.id
+							},
+							waiting:{
+								autoShow: false
+							}
+						});
+					});
+					map.addOverlay(marker);								// 地图添加坐标
+//					bbb = new Date().getTime();
+//					console.log('地图marker加载'+(bbb-aaa));
+				}
+				function addMarker2(point) {							// 添加用户的位置
+					var marker2 = new BMap.Marker(point,{ icon: my_icon});
+					map.addOverlay(marker2);
+				}
+				function remove_overlay(){                              // 清除所有的marker
+					map.clearOverlays();         
+				}
+				my_leo.addEventListener('tap', function() {				// 再次显示我的位置，并显示地址
+					var leo = new BMap.Point(localstorage.getItem('lng'), localstorage.getItem('lat'));
+					map.centerAndZoom( leo, localstorage.getItem('zoom'));
+					my_address.style.display = 'block';
+					my_address.innerHTML = localstorage.getItem('place');
+					setTimeout( function() {
+						my_address.style.display = 'none';
+					}, 5 * 1000);
+				})
+				function getPoint(lng,lat,distance) {					// 获取点的坐标
+					token = localstorage.getItem('token');
+//					console.log(lng+','+lat+','+distance+','+leo_ip);
+					mui.post(leo_ip  + '/api/v1/hdw/cabinet/nearest_position',{
+							lng:lng,
+							lat:lat,
+							distance: distance
+					},function(data){
+							console.log("getPoint == "+JSON.stringify(data));
+							if ( data.code == 0 ) {
+								
+								mui.each( data.data,function(index, item) {
+									var point = new BMap.Point(item.lng, item.lat);
+									var icon;
+									if ( item.status == 1) {			// 根据状态 选择icon
+										icon = icons[item.freePoint];
+									} else if ( item.status == 2) {
+										icon = use_icon;
+									} else {
+										icon = fault_icon;
+									}
+									addMarker(point,icon,item.id )
+								})
+							}
+						},'json'
+					);
+				}
+				if ( network_flag ) {
+					init();
+					function getMap_flag() {
+						if ( map_flag && localstorage.getItem('token') != null) {   // 每次退出 token == null
+							again( 12, 5 * 1000);	     // 此处必须等 map load
+							map_flag = false;
+						} else {
+							setTimeout(function() {
+								getMap_flag();
+							}, 29);
+						}
+					}
+					getMap_flag();
+				}
+				function myMap(my_point, zoom, m, p, test) {
+					console.log(JSON.stringify(my_point) +','+test);
+					getPoint(my_point.lng,my_point.lat,m);
+					addMarker2(my_point);
+					map.centerAndZoom(my_point, zoom);
+					mui.fire(plus.webview.getWebviewById('pages/charge-sub.html'), 'point', {
+						lng: my_point.lng,
+						lat: my_point.lat,
+						distance: m
+					});
+					localstorage.setItem('lng', my_point.lng);	        // 经度
+					localstorage.setItem('lat', my_point.lat);	 	    // 维度
+					localstorage.setItem('distance', m);	  	  		// 范围
+					localstorage.setItem('zoom', zoom);	  	  			// 比例
+					var place = '';
+					var district;
+					if ( 1 == test ) {
+						place = p.address.province + p.address.city;
+						localstorage.setItem('place', place); 
+						return;
+					}
+					if ( mui.os.ios) {									// ios详细坐标
+						mui.each(p.address, function(index, item) {     // ios和安卓 内容不一样，ios顺序不一样
+							if ( item == undefined ) {
+								item = '';
+							}
+							if ( index == 'cityCode' || index == 'country') {
+								item = '';
+							}
+							if ( plus.os.name == 'iOS' && index == 'district') {
+								district = item;
+								item = "";
+							}
+							if (  index == 'city') {
+								place += item;
+								place += district;
+							} else {
+								place += item;
+							}
+						});
+//						if ( p.addresses != undefined ) {	// 具体的地址，比如某某公司
+//							place += p.addresses;
+//						}
+					} else {
+						place = p.addresses.replace('中国','');
+					}
+					localstorage.setItem('place', place);      		// 移动救援的地理位置信息 与 定位当前位置显示的信息
+				}
+				function again(zoom,m){ 		// 地图等级，附近范围
+					plus.geolocation.getCurrentPosition(function(r){
+						console.log('坐标  = '+JSON.stringify(r));
+						remove_overlay();
+						if ( r.coords.latitude == '5e-324') {
+							plus.nativeUI.alert('请在设置中开启定位权限');
+							map.centerAndZoom("杭州",10);
+							geolocation.getCurrentPosition(function(a){
+								if(this.getStatus() == BMAP_STATUS_SUCCESS){
+									mui.toast('自动定位城市中心');
+									var p = a;
+									my_point = new BMap.Point(p.longitude, p.latitude);
+									myMap(my_point, 9, 0, a, 1);
+								}
+							},{enableHighAccuracy: true})
+						} else {
+							var p = r;
+							my_point = new BMap.Point(r.coords.longitude, r.coords.latitude);    // 我的位置
+							if ( mui.os.ios && r.coordsType == 'wgs84') {   // ios 获取的坐标为 wgs84
+								pointArr = [];
+								pointArr.push(my_point);
+								convertor.translate(pointArr, 1, 5, function(data) {
+									my_point = data.points[0];
+									myMap(my_point, zoom, m, p, 0);
+								})
+							} else {
+								myMap(my_point, zoom, m, p, 0);
+							}
+						}
+					}, function(r){
+//						if ( r.code == 2 ) {
+//							map.centerAndZoom(new BMap.point(120.19,30.26), 12);
+							first++;
+							if ( first <= 2) {
+								if ( plus.os.name == 'Android' ) {
+									leo = false;
+									plus.nativeUI.alert('请在设置中允许获取当前位置信息', function() {},'确定');
+								} else if ( mui.os.ios ){
+									var CLLocationManager = plus.ios.import("CLLocationManager");
+									var status = CLLocationManager.authorizationStatus();
+									if ( 4 != status ) {
+										plus.nativeUI.alert('请在设置中允许获取当前位置信息', function() {},'确定');
+									}
+								}
+							} 
+//						} else {
+//							plus.nativeUI.alert('当前信号不稳定，无法获取位置信息');
+//						}
+					},{
+						enableHighAccuracy: true,
+						provider: 'baidu'
+					})
+				}
+				window.addEventListener('network', function(event){  // 网络恢复
+					wainshow();
+					loadJScript();
+					var map_timer = setInterval(function(){
+						if ( map_flag ) {
+							clearInterval(map_timer);
+							again( 12, 5 * 1000);	     // 此处必须等 map load
+						}
+					}, 50)
+				});
+				window.addEventListener('charge-update', function(event) {     // login.js  和 booking-details页的更新
+					sel_scope.innerHTML == '附近' + event.detail.distance/1000 + '公里';
+					again( event.detail.zoom, event.detail.distance );
+				})
+				mui('.sel-ul').on('tap', 'li', function() {        //   选择附近范围
+					wainshow();
+					if ( !network_flag ) {
+						mui.toast('当前网络不给力，请稍后再试');
+						return;
+					}
+					sel_scope.innerHTML = this.innerHTML;
+					if ( sel_scope.innerHTML == '附近5公里' ) {
+						again(12, 5 * 1000);
+					} else if ( sel_scope.innerHTML == '附近10公里' ) {
+						again(11, 10 * 1000);
+					} else if ( sel_scope.innerHTML == '附近50公里' ){
+						again(10, 50 * 1000);
+					} else {
+						again(9, 0);
+					}
+					mui('.sel-ul')[0].style.display = 'none';
+					range_onOff = true;
+				});
+				sel_scope.addEventListener('tap', function() {		// 控制消失隐藏
+					if ( range_onOff ) {
+						mui('.sel-ul')[0].style.display = 'block';
+						range_onOff = false;
+						setTimeout(function() {
+							mui('.sel-ul')[0].style.display = 'none';
+							range_onOff = true;
+						}, 5 * 1000);
+					} else {
+						mui('.sel-ul')[0].style.display = 'none';
+						range_onOff = true;
+					}
+				});
+			});
+	</script>
+</html>

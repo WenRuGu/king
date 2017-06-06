@@ -1,0 +1,1007 @@
+{
+  "index.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "fonts/mui.ttf",
+      "pages/tab-webview-subpage-about.html",
+      "css/main.css",
+      "js/main.js",
+      "css/style.css",
+      "js/vue.min.js",
+      "pages/moverescue.html",
+      "js/style-size.js",
+      "pages/tab-webview-subpage-charge.html",
+      "pages/tab-webview-subpage-setting.html",
+      "pages/tab-webview-subpage-mall.html",
+      "pages/bottom-main.html",
+      "js/app.js",
+      "img/msg.png",
+      "js/common.js",
+      "img/logo.png"
+    ],
+    "refer": [
+      "pages/tab-webview-subpage-about.html",
+      "pages/tab-webview-subpage-chat.html",
+      "pages/tab-webview-subpage-setting.html",
+      "pages/tab-webview-subpage-contact.html",
+      "pages/moverescue.html",
+      "pages/tab-webview-subpage-mall.html",
+      "pages/tab-webview-subpage-charge.html",
+      "pages/tab-webview-subpage-order.html",
+      "pages/login.html",
+      "pages/bottom.html",
+      "pages/bottom-main.html",
+      "pages/tab-webview-subpage-scan.html",
+      "pages/mall-details-sub.html",
+      "pages/charge-sub.html",
+      "pages/moverescue-sub.html",
+      "pages/news.html",
+      "pages/net-error.html"
+    ]
+  },
+  "pages/tab-webview-subpage-about.html": {
+    "resources": [
+      "css/mui.min.css",
+      "js/mui.min.js",
+      "css/about.css",
+      "js/style-size.js",
+      "fonts/mui.ttf",
+      "css/style.css",
+      "js/about.js",
+      "pages/moverescue-sub.html",
+      "css/charge-sub.css",
+      "pages/charge-sub.html"
+    ],
+    "refer": [
+      "pages/moverescue-sub.html",
+      "pages/charge-sub.html"
+    ]
+  },
+  "pages/tab-webview-subpage-chat.html": {
+    "resources": [
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "js/mui.min.js"
+    ],
+    "refer": []
+  },
+  "pages/tab-webview-subpage-contact.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css"
+    ],
+    "refer": []
+  },
+  "pages/tab-webview-subpage-setting.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "css/my.css",
+      "img/car-pic.png",
+      "js/style-size.js",
+      "css/style.css",
+      "js/setting.js",
+      "img/default-user.png",
+      "js/aaaa.js",
+      "js/common.js",
+      "pages/charge-sub.html"
+    ],
+    "refer": [
+      "pages/login.html",
+      "pages/personal-info.html",
+      "pages/about.html",
+      "pages/feedback.html",
+      "pages/moverescue.html",
+      "pages/moverescue-sub.html",
+      "pages/balance.html",
+      "pages/address.html",
+      "pages/charge-sub.html"
+    ]
+  },
+  "pages/moverescue.html": {
+    "resources": [
+      "index.html",
+      "css/moverescue.css",
+      "fonts/mui.ttf",
+      "js/moverescue.js",
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "img/car-pic.png",
+      "js/style-size.js",
+      "js/mui.js",
+      "pages/moverescue_sub.html",
+      "pages/moverescue-sub.html",
+      "js/mui.pullToRefresh.js",
+      "js/common.js",
+      "img/star.png",
+      "js/mui.pullToRefresh.material.js",
+      "js/template.js"
+    ],
+    "refer": [
+      "index.html",
+      "pages/moverescue_sub.html",
+      "pages/moverescue-sub.html"
+    ]
+  },
+  "pages/tab-webview-subpage-mall.html": {
+    "resources": [
+      "js/mall.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "css/style.css",
+      "css/mall.css",
+      "pages/mall-wow.html",
+      "pages/mall-protective.html",
+      "pages/mall-wow-main.html",
+      "js/webviewGroup.js",
+      "pages/tab-top-subpage-1.html",
+      "css/mall-a.css",
+      "pages/mall-wow-sub.html",
+      "js/mui.pullToRefresh.js",
+      "js/mui.pullToRefresh.material.js",
+      "img/aaa.png",
+      "css/mall-wow-sub.css",
+      "js/mui.lazyload.js",
+      "js/mui.lazyload.img.js",
+      "img/car-pic.png",
+      "js/common.js",
+      "js/template.js",
+      "js/lazyimg.js",
+      "js/cache.js",
+      "img/no-network.png",
+      "js/mui.js",
+      "img/mall-default.png",
+      "img/mall-default-3.jpg",
+      "pages/charge-sub.html"
+    ],
+    "refer": [
+      "pages/mall-other.html",
+      "pages/mall-wow.html",
+      "pages/mall-car.html",
+      "pages/mall-protective.html",
+      "pages/mall-wow-main.html",
+      "pages/tab-top-subpage-1.html",
+      "pages/tab-top-subpage-2.html",
+      "pages/tab-top-subpage-3.html",
+      "pages/mall-wow-sub.html",
+      "pages/mall-car-sub.html",
+      "pages/mall-other-sub.html",
+      "pages/mall-protective-sub.html",
+      "pages/mall-protective-main.html",
+      "pages/mall-car-main.html",
+      "pages/mall-other-main.html",
+      "pages/mall-car-sub-a.html",
+      "pages/mall-details-sub.html",
+      "pages/address.html",
+      "pages/mall-details-main.html",
+      "pages/mall-details.html",
+      "pages/charge-sub.html"
+    ]
+  },
+  "pages/mall-protective.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "js/mall_wow_sub.js",
+      "js/mui.pullToRefresh.js",
+      "img/aaa.png",
+      "js/mui.pullToRefresh.material.js",
+      "css/mall-wow-sub.css",
+      "js/style-size.js"
+    ],
+    "refer": []
+  },
+  "pages/mall-other.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "fonts/mui.ttf",
+      "js/mall_wow_sub.js",
+      "js/mui.pullToRefresh.js",
+      "js/mui.pullToRefresh.material.js",
+      "css/mall-wow-sub.css",
+      "js/style-size.js",
+      "img/aaa.png"
+    ],
+    "refer": []
+  },
+  "pages/moverescue_sub.html": {
+    "resources": [
+      "img/car-pic.png",
+      "js/moverescue_sub.js",
+      "css/moverescue.css",
+      "js/style-size.js",
+      "js/mui.min.js",
+      "css/mui.min.css"
+    ],
+    "refer": []
+  },
+  "pages/mall-wow.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "css/mall_wow.css"
+    ],
+    "refer": []
+  },
+  "pages/mall-wow-main.html": {
+    "resources": [
+      "pages/mall-wow-sub.html",
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "js/style-size.js"
+    ],
+    "refer": [
+      "pages/mall-wow-sub.html"
+    ]
+  },
+  "pages/mall-wow-sub.html": {
+    "resources": [
+      "js/mall_wow_sub.js",
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "css/mall-wow-sub.css",
+      "js/style-size.js",
+      "img/aaa.png",
+      "js/mui.pullToRefresh.js",
+      "js/mui.pullToRefresh.material.js"
+    ],
+    "refer": [
+      "pages/mall-details-main.html",
+      "pages/mall-details-sub.html"
+    ]
+  },
+  "pages/moverescue-sub.html": {
+    "resources": [
+      "css/moverescue.css",
+      "img/car-pic.png",
+      "js/moverescue_sub.js",
+      "js/mui.min.js",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "fonts/mui.ttf",
+      "js/mui.pullToRefresh.js",
+      "js/mui.pullToRefresh.material.js",
+      "img/star.png",
+      "js/moverescue-sub.js",
+      "js/common.js",
+      "js/template.js",
+      "img/default-user.png"
+    ],
+    "refer": []
+  },
+  "pages/mall-details-main.html": {
+    "resources": [
+      "fonts/mui.ttf",
+      "pages/mall-details-sub.html",
+      "js/mui.min.js",
+      "js/style-size.js",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "pages/mall-details-sub.html"
+    ]
+  },
+  "pages/mall-details-sub.html": {
+    "resources": [
+      "css/moverescue.css",
+      "js/mui.min.js",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "img/aa.png",
+      "css/mall-details.css",
+      "fonts/mui.ttf",
+      "js/mall-details.js"
+    ],
+    "refer": [
+      "pages/payment.html",
+      "pages/mall-order.html"
+    ]
+  },
+  "pages/charge-sub.html": {
+    "resources": [
+      "css/moverescue.css",
+      "js/charge-sub.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "css/charge-sub.css",
+      "img/go-here.png",
+      "img/free-pattery.png",
+      "img/use-pattery.png",
+      "img/order.png",
+      "img/point-km.png",
+      "js/mui.pullToRefresh.js",
+      "js/mui.pullToRefresh.material.js",
+      "css/iconfont.css",
+      "fonts/iconfont.woff",
+      "js/common.js",
+      "js/template.js",
+      "img/space_green.png"
+    ],
+    "refer": [
+      "pages/booking-details.html",
+      "pages/address.html",
+      "pages/map.html"
+    ]
+  },
+  "pages/tab-webview-subpage-charge.html": {
+    "resources": [
+      "js/mui.min.js",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "css/style.css",
+      "pages/charge-sub.html",
+      "fonts/mui.ttf",
+      "css/charge-sub.css",
+      "img/go-here.png",
+      "img/free-pattery.png",
+      "img/use-pattery.png",
+      "img/order.png",
+      "img/point-km.png",
+      "pages/charge-main.html",
+      "img/space_gray.png",
+      "img/space_red.png",
+      "img/space_green.png",
+      "pages/moverescue-sub.html",
+      "img/g-m-1.png",
+      "img/r-use.png",
+      "img/g-1.png",
+      "js/mui.pullToRefresh.js",
+      "js/mui.pullToRefresh.material.js",
+      "img/fault.png",
+      "img/useing.png",
+      "img/g-2.png",
+      "img/g-6.png",
+      "img/g-4.png",
+      "img/g-5.png",
+      "img/g-3.png",
+      "img/no-network.png",
+      "img/my-icon.png",
+      "css/iconfont.css",
+      "fonts/iconfont.woff",
+      "img/my-icon1.png",
+      "fonts/iconfont.ttf",
+      "js/baiduMap.js"
+    ],
+    "refer": [
+      "pages/charge-sub.html",
+      "pages/charge-main.html",
+      "pages/booking-details.html",
+      "pages/moverescue-sub.html",
+      "pages/charge-map.html"
+    ]
+  },
+  "pages/tab-top-subpage-2.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css"
+    ],
+    "refer": []
+  },
+  "pages/tab-webview-subpage-order.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "js/iscroll.js",
+      "js/order.js",
+      "css/order.css",
+      "js/style-size.js",
+      "js/mui.pullToRefresh.js",
+      "js/mui.pullToRefresh.material.js",
+      "js/common.js",
+      "js/template.js",
+      "css/swiper.min.css",
+      "js/swiper.min.js",
+      "fonts/mui.ttf",
+      "img/no-network.png",
+      "pages/charge-sub.html",
+      "js/mui.js"
+    ],
+    "refer": [
+      "pages/payment.html",
+      "pages/charge-sub.html"
+    ]
+  },
+  "pages/charge-main.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "pages/charge-sub.html"
+    ],
+    "refer": [
+      "pages/charge-sub.html"
+    ]
+  },
+  "pages/login.html": {
+    "resources": [
+      "css/login.css",
+      "js/login.js",
+      "img/user-blue.png",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "css/iconfont.css",
+      "img/car-pic.png",
+      "fonts/iconfont.woff",
+      "js/md5.js",
+      "js/sha1.js",
+      "img/timg.jpg",
+      "img/default-user.png",
+      "js/login-2.js",
+      "img/logo.png"
+    ],
+    "refer": [
+      "pages/register.html",
+      "pages/booking-details.html",
+      "pages/account.html"
+    ]
+  },
+  "pages/register.html": {
+    "resources": [
+      "img/right-jian.png",
+      "js/register .js",
+      "css/register .css",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "js/register.js"
+    ],
+    "refer": [
+      "pages/register-2.html",
+      "pages/set-psw.html"
+    ]
+  },
+  "pages/register-2.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "js/register-2.js",
+      "css/register-2.css"
+    ],
+    "refer": [
+      "pages/set-psw.html"
+    ]
+  },
+  "pages/set-psw.html": {
+    "resources": [
+      "js/set-psw.js",
+      "css/set-psw.css",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "js/md5.js",
+      "js/sha1.js"
+    ],
+    "refer": []
+  },
+  "pages/mall-car.html": {
+    "resources": [
+      "js/style-size.js",
+      "js/mall_wow_sub.js",
+      "js/mui.pullToRefresh.js",
+      "js/mui.min.js",
+      "img/aaa.png",
+      "js/mui.pullToRefresh.material.js",
+      "css/mall-wow-sub.css",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "pages/mall-details-sub.html"
+    ]
+  },
+  "pages/booking-details.html": {
+    "resources": [
+      "img/free-pattery.png",
+      "js/booking-details.js",
+      "fonts/mui.ttf",
+      "css/booking-details.css",
+      "img/weixin.png",
+      "img/point-km.png",
+      "js/mui.min.js",
+      "img/use-pattery.png",
+      "css/mui.min.css",
+      "js/style-size.js",
+      "img/zhifu.png",
+      "img/balance.png",
+      "img/superscript.png",
+      "img/start-time.png",
+      "css/swiper.min.css",
+      "js/swiper.min.js",
+      "img/aaa.png"
+    ],
+    "refer": []
+  },
+  "pages/bottom.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "js/style-size.js"
+    ],
+    "refer": []
+  },
+  "pages/bottom-main.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "css/bottom-main.css",
+      "js/style-size.js",
+      "css/iconfont.css",
+      "fonts/iconfont.woff",
+      "img/bot-charge-g.png",
+      "img/bot-setting-g.png",
+      "img/bot-order-g.png",
+      "img/bot-mall-g.png",
+      "img/bot-order.png",
+      "img/bot-setting.png",
+      "img/bot-mall.png",
+      "img/bot-charge.png",
+      "img/saoma-pic.png",
+      "img/bot-order-1.png",
+      "img/bot-mall-2.png",
+      "img/bot-my-2.png",
+      "img/bot-charge-2.png",
+      "img/charge-2.png",
+      "img/mall-1.png",
+      "img/order-1.png",
+      "img/my-1.png",
+      "img/charge-1.png",
+      "img/my-2.png",
+      "img/order-2.png",
+      "img/mall-2.png"
+    ],
+    "refer": [
+      "pages/tab-webview-subpage-scan.html",
+      "pages/map.html"
+    ]
+  },
+  "pages/mall-protective-sub.html": {
+    "refer": [
+      "pages/mall-details-main.html",
+      "pages/mall-details-sub.html"
+    ],
+    "resources": [
+      "js/mall_wow_sub.js",
+      "js/mui.min.js",
+      "img/aaa.png",
+      "css/mall-wow-sub.css",
+      "js/style-size.js",
+      "css/mui.min.css"
+    ]
+  },
+  "pages/mall-car-sub.html": {
+    "resources": [
+      "js/mall_wow_sub.js",
+      "js/mui.min.js",
+      "img/aaa.png",
+      "css/mall-wow-sub.css",
+      "js/style-size.js",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "pages/mall-details-main.html"
+    ]
+  },
+  "pages/mall-other-sub.html": {
+    "resources": [
+      "js/mall_wow_sub.js",
+      "js/mui.min.js",
+      "img/aaa.png",
+      "css/mall-wow-sub.css",
+      "js/style-size.js",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "pages/mall-details-main.html"
+    ]
+  },
+  "pages/mall-car-sub-a.html": {
+    "resources": [
+      "js/mall_wow_sub.js",
+      "img/aaa.png",
+      "css/mall-wow-sub.css"
+    ],
+    "refer": [
+      "pages/mall-details-main.html"
+    ]
+  },
+  "pages/tab-webview-subpage-scan.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css",
+      "js/style-size.js"
+    ],
+    "refer": [
+      "pages/open-box-1.html",
+      "pages/payment.html",
+      "pages/open-box-result.html"
+    ]
+  },
+  "pages/charge-map.html": {
+    "resources": [
+      "img/space_gray.png",
+      "img/space_red.png",
+      "img/space_green.png",
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "css/charge-sub.css",
+      "js/style-size.js"
+    ],
+    "refer": []
+  },
+  "pages/payment.html": {
+    "resources": [
+      "css/payment.css",
+      "js/mui.min.js",
+      "js/payment.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "css/style.css",
+      "img/zhifu.png",
+      "img/weixin.png",
+      "css/iconfont.css",
+      "fonts/iconfont.woff",
+      "img/balance-icon.png"
+    ],
+    "refer": [
+      "pages/tab-webview-subpage-scan.html",
+      "pages/open-box-1.html"
+    ]
+  },
+  "pages/personal-info.html": {
+    "resources": [
+      "css/personal-info.css",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "img/car-pic.png",
+      "js/personal-info.js",
+      "js/popover.js",
+      "img/default-user.png",
+      "js/mui.zoom.js",
+      "js/mui.previewimage.js",
+      "js/lazyimg.js",
+      "js/cache.js",
+      "js/common.js"
+    ],
+    "refer": [
+      "pages/login.html",
+      "pages/change-name.html",
+      "pages/change-psw.html",
+      "pages/nickname.html",
+      "pages/realName.html"
+    ]
+  },
+  "pages/about.html": {
+    "resources": [
+      "css/about.css",
+      "img/aa.png",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "img/car-pic.png"
+    ],
+    "refer": []
+  },
+  "pages/change-name.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css"
+    ],
+    "refer": []
+  },
+  "pages/account.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "img/car-pic.png",
+      "img/default-user.png"
+    ],
+    "refer": [
+      "pages/account-1.html",
+      "pages/account-2.html"
+    ]
+  },
+  "pages/account-1.html": {
+    "resources": [
+      "img/bot-charge.png",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "css/register-2.css"
+    ],
+    "refer": [
+      "pages/set-psw.html",
+      "pages/reset-psw.html"
+    ]
+  },
+  "pages/reset-psw.html": {
+    "resources": [
+      "css/set-psw.css",
+      "js/reset-psw.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "js/sha1.js",
+      "js/md5.js"
+    ],
+    "refer": []
+  },
+  "pages/change-psw.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "js/sha1.js",
+      "js/md5.js",
+      "css/iconfont.css",
+      "fonts/iconfont.woff"
+    ],
+    "refer": []
+  },
+  "pages/news.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "img/car-pic.png",
+      "js/mui.pullToRefresh.js",
+      "js/mui.pullToRefresh.material.js",
+      "css/style.css",
+      "js/template.js",
+      "js/common.js",
+      "img/mall-default-3.jpg"
+    ],
+    "refer": [
+      "pages/news-details.html"
+    ]
+  },
+  "pages/feedback.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css"
+    ],
+    "refer": []
+  },
+  "pages/account-2.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "css/iconfont.css",
+      "fonts/iconfont.woff"
+    ],
+    "refer": [
+      "pages/account-3.html"
+    ]
+  },
+  "pages/account-3.html": {
+    "resources": [
+      "js/account-3.js",
+      "css/register-2.css",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "pages/set-psw.html",
+      "pages/reset-psw.html"
+    ]
+  },
+  "pages/news-details.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css"
+    ],
+    "refer": []
+  },
+  "pages/balance.html": {
+    "resources": [
+      "img/balance-pic.png",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "pages/balance-detail.html",
+      "pages/recharge.html"
+    ]
+  },
+  "pages/balance-detail.html": {
+    "resources": [
+      "js/mui.min.js",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "fonts/mui.ttf",
+      "css/balance-detail.css",
+      "js/mui.pullToRefresh.js",
+      "js/mui.pullToRefresh.material.js"
+    ],
+    "refer": []
+  },
+  "pages/recharge.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "img/zhifu.png",
+      "img/weixin.png",
+      "css/iconfont.css",
+      "fonts/iconfont.woff"
+    ],
+    "refer": []
+  },
+  "pages/nickname.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css"
+    ],
+    "refer": []
+  },
+  "pages/realName.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css"
+    ],
+    "refer": []
+  },
+  "pages/map.html": {
+    "resources": [
+      "js/mui.min.js",
+      "css/mui.min.css",
+      "fonts/mui.ttf"
+    ]
+  },
+  "pages/open-box-1.html": {
+    "resources": [
+      "js/style-size.js",
+      "img/code-1.png",
+      "js/mui.min.js",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "pages/open-box-2.html",
+      "pages/tab-webview-subpage-scan.html"
+    ]
+  },
+  "pages/open-box-2.html": {
+    "resources": [
+      "img/code-2.png",
+      "js/mui.min.js",
+      "js/style-size.js",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "pages/open-box-3.html"
+    ]
+  },
+  "pages/address.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/iconfont.css",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "fonts/iconfont.woff"
+    ],
+    "refer": [
+      "pages/add_address.html"
+    ]
+  },
+  "pages/add_address.html": {
+    "resources": [
+      "js/mui.picker.min.js",
+      "js/mui.poppicker.js",
+      "js/city.data.js",
+      "css/mui.picker.min.css",
+      "css/mui.poppicker.css",
+      "js/city.data-3.js",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css"
+    ]
+  },
+  "pages/mall-order.html": {
+    "resources": [
+      "js/mui.min.js",
+      "img/aaa.png",
+      "fonts/mui.ttf",
+      "css/iconfont.css",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "css/style.css"
+    ],
+    "refer": [
+      "pages/mall-address.html",
+      "pages/payment.html"
+    ]
+  },
+  "pages/mall-address.html": {
+    "resources": [
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "css/style.css"
+    ],
+    "refer": [
+      "pages/address.html"
+    ]
+  },
+  "pages/mall-details.html": {
+    "resources": [
+      "css/mall-details.css",
+      "js/mall-details.js",
+      "img/aa.png",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "js/style-size.js",
+      "css/mui.min.css",
+      "img/aaa.png",
+      "css/swiper.min.css",
+      "js/swiper.min.js"
+    ],
+    "refer": [
+      "pages/mall-order.html"
+    ]
+  },
+  "pages/open-box-3.html": {
+    "resources": [
+      "img/finish-green.png",
+      "js/mui.min.js",
+      "js/style-size.js",
+      "css/mui.min.css"
+    ]
+  },
+  "pages/open-box-result.html": {
+    "resources": [
+      "img/result-tan.png",
+      "js/style-size.js",
+      "js/mui.min.js",
+      "css/mui.min.css"
+    ]
+  },
+  "pages/net-error.html": {
+    "resources": [
+      "css/mui.min.css",
+      "img/no-network.png"
+    ]
+  }
+}

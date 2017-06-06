@@ -1,0 +1,431 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/style.css"/>
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css"/>
+		<style>
+			html,body{
+				width: 100%;
+				height: 100%;
+			}
+			.mui-bar{
+				background: #fff;
+			}
+			a{
+				color: #333;
+			}
+			.mui-content{
+				position: relative;
+				height: 100%;
+			}
+			.addressBox{
+				width: 100%;
+				min-height: 1.8rem;
+				background: #fff;
+				padding: 0 0 0 0.3rem;
+				margin-bottom: 0.3rem;
+			}
+			.addressBox span.mui-icon{
+				float: left;
+				width: 8%;
+				height: 1.8rem;
+				line-height: 1.8rem;
+				font-size: 0.4rem;
+			}
+			.addressBox a{
+				float: left;
+				width: 84%;
+				height: 1.8rem;
+				display: block;
+			}
+			.addressBox .mui-navigate-right:after{
+				top: 1.8rem;
+				right: 0.2rem;
+			}
+			.no-address{
+				display: none;
+				width: 74%;
+				height: 60%;
+				font-size: 0.34rem;
+				color: #666;
+				margin-left: 13%;
+				padding-top: 6%;
+				text-align: center;
+			}
+			.address-info{
+				height: 0.7rem;
+				line-height: 0.7rem;
+				font-size: 0.3rem;
+				color: #333;
+			}
+			.address-info .addressName{
+				display: inline-block;
+				width: 60%;
+			    overflow: hidden;
+			    white-space: nowrap;
+			    text-overflow: ellipsis;
+			}
+			.address{
+				line-height: 0.4rem;
+				font-size: 0.28rem;
+				color: #888;
+			 	overflow: hidden;
+			 	text-overflow: ellipsis;
+			 	display: -webkit-box;
+			 	-webkit-line-clamp: 2;
+			 	-webkit-box-orient: vertical;
+			}
+			.mui-table-view .mui-table-view-cell.mui-active{
+				background: #fff;
+			}
+			.mui-table-view li:nth-child(3) a span{
+				font-size: 0.3rem;
+			}
+			.mui-table-view li:nth-child(3) a span:nth-child(1){
+				color: #333;
+			}
+			.mui-table-view li:nth-child(3) a span:nth-child(2){
+				color: #888;
+				margin-right: 0.6rem;
+			}
+			.goods-pic{
+				width: 25%;
+				height: 1.4rem;
+				float: left;
+			}
+			.goods-detail{
+				float: left;
+				position: relative;
+				width: 75%;
+				height: 1.4rem;
+				padding-left:0.26rem;
+			}
+			.goods-name{
+				width: 100%;
+				line-height: 0.4rem;
+				font-size: 0.32rem;
+				overflow: hidden;
+			 	text-overflow: ellipsis;
+			 	display: -webkit-box;
+			 	-webkit-line-clamp: 2;
+			 	-webkit-box-orient: vertical;
+			}
+			.goods-price{
+				position: absolute;
+				bottom: 0;
+				width: 100%;
+				color: #ff7019;
+				font-size: 0.32rem;
+			}
+			.goods-num{
+				font-size: 0.3rem;
+				height: 32px;
+				line-height: 32px;
+				color: #333;
+			}
+			.mui-numbox{
+				height: 32px;
+				padding: 0 35px;
+			}
+			.mui-numbox [class*=btn-numbox], .mui-numbox [class*=numbox-btn]{
+				width: 35px;
+			}
+			textarea{
+				margin-bottom: 0;
+				border: none;
+				font-size: 0.28rem;
+				background: #e8e8e8;
+			}
+			.mui-table-view li:nth-child(4) p{
+				text-align: right;
+				color: #333;
+			}
+			.total-num{
+				color: #ff7019;
+				font-size: 0.36rem;
+			}
+			.confirm-order{
+				position: absolute;
+				width: 100%;
+				height: 1rem;
+				line-height: 1rem;
+				bottom: 0;
+				z-index: 99;
+				background: #fff;
+				text-align: right;
+				font-size: 0.3rem;
+			}
+			.total{
+				min-width: 5%;
+				font-size: 0.36rem;
+				color: #FF7019;
+				margin-right: 0.3rem;
+			}
+			.confirm{
+				width: 35%;
+				height: 1rem;
+				border: none;
+				border-radius: 0;
+			}
+			.mui-btn,button{
+				-webkit-transition: none;
+				transition: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">确认订单</h1>
+		</header>
+		<div class="mui-content">
+			<div class="addressBox">
+				<span class="mui-icon mui-icon-location"></span>
+				<a class="mui-navigate-right">
+					<p class="address-info">
+						<span class="addressName"></span>
+						<span class="mui-pull-right addressMobile"></span>
+					</p>
+					<p class="address">
+						<span class="city-detail"></span>
+						<span class="street"></span>
+					</p>
+					<p class="no-address">
+						没有填写地址，请点击进入管理地址，添加新地址
+					</p>
+				</a>
+			</div>
+			<ul class="mui-table-view">
+			    <li class="mui-table-view-cell first-li">
+			    	<img class="goods-pic" src=""/>
+			    	<div class="goods-detail">
+			    		<span class="goods-name">
+			    			
+			    		</span>
+			    		<span class="goods-price">
+			    			
+			    		</span>
+			    	</div>
+			    </li>
+			    <li class="mui-table-view-cell">
+			    	<span class="goods-num">购买数量</span>
+			    	<div class="mui-numbox mui-pull-right" data-numbox-step='1' data-numbox-min='1' data-numbox-max='1000'>
+					  <button class="mui-btn mui-numbox-btn-minus" type="button">-</button>
+					  <input class="mui-numbox-input" type="number" />
+					  <button class="mui-btn mui-numbox-btn-plus" type="button">+</button>
+					</div>
+			    </li>
+			    <li class="mui-table-view-cell">
+			       <textarea class="seller-msg" placeholder="给卖家留言"></textarea>
+			    </li>
+			    <li class="mui-table-view-cell">
+			      <p>
+			      	共
+			      	<span class="sel-num">1</span>
+			      	件商品，合计：
+			      	<span class="total-num">
+			      	</span>
+			      </p>
+			    </li>
+			</ul>
+			<div class="confirm-order">
+				合计：
+				<span class="total"></span>
+				<button type="button" class="mui-btn mui-btn-primary confirm">提交订单</button>
+			</div>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			(function($,doc) {
+				
+				function $c(id) {
+					return document.getElementsByClassName(id)[0];
+				}
+				
+				var addressBox = $c('addressBox');		// 地址栏
+				var confirm = $c('confirm');				// 提交
+				var confirm_order = $c('confirm-order');	
+				
+				var address_info = $c('address-info');		
+				var address = $c('address');
+				var no_address = $c('no-address');
+				var addressName = $c('addressName');		// 收件人
+				var addressMobile = $c('addressMobile');	// 联系电话
+				var city_detail = $c('city-detail');				// 大概地址
+				var street = $c('street');				// 详细地址
+				
+				var numbox = $c('mui-numbox-input');
+				var goods_name = $c('goods-name');		// 商品名称
+				var goods_price = $c('goods-price');		// 价格
+				var goods_pic = $c('goods-pic');			// pic
+				var sel_num = $c('sel-num');	
+				var total_num = $c('total-num');	
+				var total = $c('total');	
+				
+				var txt = doc.getElementsByTagName('textarea')[0];
+				var code_province = '';		// 省编码
+				var code_city;				// 市编码
+				var code_district;	        // 区县编码
+				var address_detail;			// 接收提交的的 地址
+				var reciever;				// 联系人
+				var total_price = 0;		// 计算的总价格
+				var self;
+				var price;					// 传入的商品价格
+				var token;
+				var arr_address = [];		// 接受的默认地址
+				
+				var localstorage = window.localStorage;
+				var mallor_ip = localstorage.getItem('ip');
+				$.plusReady(function() {
+					plus.nativeUI.closeWaiting();
+					self = plus.webview.currentWebview();
+					price = self.price;
+					goods_name.innerHTML = self.itemName;
+					goods_price.innerHTML = total_num.innerHTML = total.innerHTML ='¥ '+ self.price;
+					total_price = self.price;
+					goods_pic.src = self.src;
+					// 判断 没有默认的情况下
+					function default_address() {
+						if ( localstorage.getItem('default_address') == 'false' ) {
+							address_info.style.display = 'none';
+							address.style.display = 'none';
+							no_address.style.display = 'block';
+							return;
+						}
+						arr_address = JSON.parse(localstorage.getItem('default_address'));
+						addressName.innerHTML ='收件人：'+ arr_address[0];
+						reciever = arr_address[0];
+						addressMobile.innerHTML = arr_address[1];
+						city_detail.innerHTML = '收件地址：' + arr_address[2];
+						address_detail = arr_address[2];
+					    street.innerHTML = arr_address[3];
+						code_province = arr_address[4];
+						code_city = arr_address[5];
+						code_district = arr_address[6];
+					}
+					default_address();	
+					
+					window.addEventListener('resize', function() {  // 底部弹出输入顶起 底部div
+					    confirm_order.style.display = document.body.clientHeight <= 400 ? 'none' : 'block';
+					}, false);
+					
+					window.addEventListener('sel-address',function(event){  // 接收选择 暂时的发送地址
+						address_info.style.display = 'block';
+						address.style.display = '-webkit-box';
+						no_address.style.display = 'none';
+						
+						addressName.innerHTML ='收件人：' + event.detail.contact;
+						reciever = event.detail.contact;
+						addressMobile.innerHTML = event.detail.tel;
+						city_detail.innerHTML = '收件地址：' + event.detail.str;
+						address_detail = event.detail.str;
+						street.innerHTML = event.detail.street_txt;
+						code_province = event.detail.provinceName;
+						code_city = event.detail.cityName;
+						code_district = event.detail.districtName;
+					});
+					function oPage(url,data) {
+						var d = data || {};
+						$.openWindow({
+							id: url,
+							url: url,
+							show: {
+								aniShow: 'slide-in-right',
+								duration: 200
+							},
+							styles: {
+								popGesture: 'close'
+							},
+							extras: d,
+							waiting: {
+								autoShow: false
+							}
+						})
+					}
+					addressBox.addEventListener('tap',function() {
+						oPage('mall-address.html');
+					});
+					txt.addEventListener('input', function() {	// 输入限制
+						var maxChars = 250; 				// 限制输入字符
+						if ( txt.value.length > 250 ) {
+							txt.value = txt.value.substring(0,maxChars);
+							$.toast('输入字数超出250字');
+							return false;
+						}
+					});
+					numbox.addEventListener('change', function() {
+						sel_num.innerHTML = numbox.value;
+						total_price = price * numbox.value * 1
+						total.innerHTML = total_num.innerHTML = '¥ '+ total_price;
+					})
+					confirm.addEventListener('tap',function() {
+						token = localstorage.getItem('token');
+						plus.nativeUI.showWaiting('正在生成订单...',{
+							loading:{
+								display: 'inline'
+							}
+						})
+						if ( code_province == '' ) {		// 有更换地址，就是用更换的，没有的就用默认
+							code_province = arr_address[4];
+							code_city = arr_address[5];
+							code_district = arr_address[6];
+						}
+						console.log(self.exchangeMoney+','+code_province);
+						if ( self.exchangeMoney == 0 && code_province == undefined ) {
+							plus.nativeUI.closeWaiting();
+							plus.nativeUI.alert('请添加收货地址');
+							return;
+						}
+						console.log(self.itemId+','+numbox.value+','+price+','+address_detail+','+code_province+','+code_city+','+code_district+','+reciever+','+txt.value);
+						mui.ajax( mallor_ip+'/api/v1/hdw/item_order/create',{
+							data:{
+								token:token,
+								itemId: self.itemId,
+								amount: parseInt(numbox.value),
+								price: price * 100,
+								province:code_province,
+								city: code_city,
+								district: code_district,
+								street: address_detail,
+								receiverMobile:addressMobile.innerHTML,
+								receiver:reciever,
+								leaveMessage: txt.value
+							},
+							dataType:'json',
+							type:'post',
+							timeout:10000,          
+							success:function(data){
+								console.log(JSON.stringify(data));
+								if ( data.code == 0 ) {
+									oPage('payment.html',{
+										orderId: data.data.id,
+										price: price,
+										amount: numbox.value,
+										total: total_price,
+										itemName: self.itemName
+									})
+								} else {
+									plus.nativeUI.closeWaiting();
+									plus.nativeUI.alert('提交订单失败，请再次提交');
+								}
+							},
+							error:function(xhr,type,errorThrown){
+								plus.nativeUI.closeWaiting();
+								plus.nativeUI.alert('提交订单失败，请再次提交');
+							}
+						});
+					})
+				})
+			}(mui,document))
+		</script>
+	</body>
+
+</html>

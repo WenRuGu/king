@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Hello MUI</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		
+		<link rel="stylesheet" href="../css/mui.min.css">
+		<link rel="stylesheet" type="text/css" href="../css/bottom-main.css"/>
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css"/>
+	</head>
+
+	<body>		
+		<nav class="mui-bar mui-bar-tab">
+			<a class="mui-tab-item mui-active" href="pages/tab-webview-subpage-charge.html">
+				<img class="charge-img" src="../img/charge-2.png"/>
+			</a>
+			<a class="mui-tab-item" href="pages/tab-webview-subpage-mall.html">
+				<img class="mall-img" src="../img/mall-1.png"/>
+			</a>
+			<div class="mui-tab-circle" href="pages/tab-webview-subpage-scan.html">
+				<div class="tab-center">
+					<div class="circle_solid"></div>
+					<div class="square"></div>
+				    <div class="circle">
+				    	<span class="mui-icon iconfont icon-saoma" style="color:#fff;font-size: 32px;"></span>
+				    </div>
+				</div>
+			</div>
+			<a class="mui-tab-item" href="pages/tab-webview-subpage-order.html">
+				<img class="order-img" src="../img/order-1.png"/>
+			</a>
+			<a class="mui-tab-item" href="pages/tab-webview-subpage-setting.html">
+				<img class="setting-img" src="../img/my-1.png"/>
+			</a>
+		</nav>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script type="text/javascript" charset="utf-8"> 
+			 //mui初始化
+			 mui.init();
+			(function($, doc) {
+				function $c(id) {
+					return document.getElementsByClassName(id)[0];
+				}
+				
+				var sTime = new Date().getTime();
+				var endTime;
+				var scan_circle =$c('mui-tab-circle');
+				var id;
+				var title;
+				var network_flag = true;
+				
+				var charge_img = $c('charge-img');
+				var mall_img = $c('mall-img');
+				var order_img = $c('order-img');
+				var setting_img = $c('setting-img');
+				var click = 1;
+				var version = true;
+				$.plusReady(function() {
+					function wainshow() {
+					    if (plus.networkinfo.getCurrentType() == plus.networkinfo.CONNECTION_NONE) {
+					    	network_flag = false;
+					    } else {
+							network_flag = true;		// 有网络
+					    }
+					}
+					if ( plus.os.name == 'Android' ) {
+						if ( parseInt(plus.os.version) <= 5 ) {
+							version = false;
+						}
+					}
+					function fire(page, titles) {
+						$.fire(plus.webview.getLaunchWebview(),'newid',{
+							id: page,
+							title: titles
+						});
+					}
+					window.addEventListener('active', function(event){   // main.js
+						charge_img.src = '../img/charge-1.png';
+						mall_img.src = '../img/mall-1.png';
+						order_img.src = '../img/order-1.png';
+						setting_img.src = '../img/my-1.png';
+						
+						charge_img.src = '../img/charge-2.png';
+						
+						id = 'pages/tab-webview-subpage-charge.html';
+						title = '充电';
+						if ( window.localStorage.getItem('sec-login') == 'true') {
+							fire(id,title);
+						}
+					})
+					function tab(that) {
+						id = that.getAttribute('href');
+						charge_img.src = '../img/charge-1.png';
+						mall_img.src = '../img/mall-1.png';
+						order_img.src = '../img/order-1.png';
+						setting_img.src = '../img/my-1.png';
+
+						if ( id == 'pages/tab-webview-subpage-charge.html') {
+							charge_img.src = '../img/charge-2.png';
+							title = '充电';
+							if ( click != 1) {
+								wainshow();
+								if ( !network_flag ) {
+//									return;
+								} else {
+									$.fire(plus.webview.getWebviewById('pages/tab-webview-subpage-charge.html'), 'charge-update', {
+										distance: localStorage.getItem('distance') || 5000,
+										zoom: localStorage.getItem('zoom') || 12
+									});
+								}
+							}
+							click = 1;
+						} else if ( id == 'pages/tab-webview-subpage-mall.html' ) {
+							mall_img.src = '../img/mall-2.png';
+							title = '商城';
+							click = 2;
+						} else if ( id == 'pages/tab-webview-subpage-order.html' ) {
+							order_img.src = '../img/order-2.png';
+							title = '订单';
+							click = 3;
+						} else if ( id == 'pages/tab-webview-subpage-setting.html' ) {
+							setting_img.src = '../img/my-2.png';
+							title = '我的';
+							click = 4;
+						}
+						fire(id, title);
+					}
+					/*
+					 * 低端安卓机，点击切换太快，会发生堆栈溢出，导致页面切换与底部，头部文字不对应
+					 * */
+					$('.mui-bar-tab').on('tap', 'a', function(e) {
+						var that = this;
+						if ( !version ) {
+							sTime = new Date().getTime();
+							if ( endTime > sTime - 200 ) {  // 限制 1秒 5次
+								return;
+							}
+							endTime = new Date().getTime();
+							tab(that);
+						} else {
+							tab(that);
+						} 
+					});
+				});
+				scan_circle.addEventListener('tap', function() {
+					mui.openWindow({
+						id:'pages/tab-webview-subpage-scan.html',
+						url: 'tab-webview-subpage-scan.html',
+						styles: {
+							popGesture: 'none',
+							hardwareAccelerated:true //开启硬件加速
+						},
+						show: {
+							aniShow: 'pop-in'
+						},
+						styles: {
+							popGesture: 'close'
+						},
+						waiting: {
+							autoShow: false
+						}
+					});
+				});
+			
+			}(mui, document))
+		</script>
+	</body>
+
+</html>

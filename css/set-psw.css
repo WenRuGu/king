@@ -1,0 +1,106 @@
+
+html,body{
+	width: 100%;
+	height: 100%;
+	position: relative;
+}
+body{
+	background: #F5F5F5;
+}
+a{
+	color:#333;
+}
+.mui-btn, button{
+	-webkit-transition: none;
+	-moz-transition: none;
+	-ms-transition: none;
+	-o-transition: none;
+	transition: none;
+	
+	border: none;
+}
+.mui-bar{
+	background-color: #fff;
+}
+/*.mui-bar-nav{
+	box-shadow: none;
+	border-bottom: 0.02rem solid #ccc;
+}*/
+
+.mui-input-group{
+	top: 1.2rem;
+}
+
+.mui-input-group .mui-input-row{
+	height: 1.2rem;
+}
+.mui-input-group .mui-input-row label{
+	width: 30%;
+	height: 1.2rem;
+	line-height: 1.2rem;
+	font-size: 0.32rem;
+}
+.mui-input-group .mui-input-row input{
+	height: 1.2rem;
+	padding: 0;
+	font-size: 0.32rem;
+}
+.mui-input-row label~input{
+	width: 70%;
+	height: 1.2rem;
+}
+.mui-input-row .mui-input-clear~.mui-icon-clear, 
+.mui-input-row .mui-input-password~.mui-icon-eye,
+.mui-input-row .mui-input-speech~.mui-icon-speech{
+	top: 0.36rem;
+}
+.finish{
+	width: 90%;
+	height: 0.9rem;
+	margin-left: 5%;
+	font-size: 0.32rem;
+	color: #fff;
+	margin-top: 1.8rem;
+}
+
+#popover{
+	width: 50%;
+	height: 1rem;
+	line-height: 1rem;
+	text-align: center;
+}
+.mui-input-row label{
+	height:1.1rem;
+	line-height: 1.1rem;
+	padding: 0;
+	padding-left: 0.3rem;
+}
+.mui-input-group .mui-input-row label{
+	margin-top:0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

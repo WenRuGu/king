@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<style>
+			.no-network{
+				widows: 100%;
+				height: 80%;
+			}
+			.no-network img{
+				position: absolute;
+				top: 2rem;
+				left: 50%;
+				width: 2rem!important;
+				margin-left: -1rem;
+			}
+			.no-network p{
+				float: left;
+				width: 100%;
+				margin-top: 4rem;
+				text-align: center;
+				font-size: 0.34rem;
+				color: #666;
+			}
+			.again-net{
+				position: absolute;
+				top: 4.6rem;
+				width: 4rem;
+				text-align: center;
+				height: 0.6rem;
+				line-height: 0.6rem;
+				left: 50%;
+				margin-left: -2rem;
+				font-size: 0.34rem;
+				color: #666;
+			}
+			button{
+				-webkit-transition: none;
+				transition: none;
+			}
+			.refresh{
+				position: absolute;
+				width: 100px;
+				top: 5.4rem;
+				left: 50%;
+				margin-left: -50px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="no-network">
+			<img src="../img/no-network.png"/>
+			<p>您的网络不太好哦~</p>
+			<span class="again-net">请检查网络设置</span>
+			<button type="button"  data-loading-text="正在刷新" class="mui-btn refresh">刷新试试</button>
+		</div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			var network_flag = true;
+			var btn = document.getElementsByClassName('mui-btn')[0];
+			mui.plusReady(function() {
+				function wainshow() {
+				    if (plus.networkinfo.getCurrentType() == plus.networkinfo.CONNECTION_NONE) {
+				    	network_flag = false;
+				    } else {
+						network_flag = true;		// 有网络
+				    }
+				}
+				btn.addEventListener('tap',function() {
+					var self = plus.webview.currentWebview();
+					mui('.mui-btn').button('loading');
+					setTimeout(function() {
+						wainshow();
+						if ( network_flag ) {
+							mui.fire(plus.webview.getLaunchWebview(),'update-network',{});
+							setTimeout(function() {
+								plus.webview.close(self);
+							}, 300);
+						} else {
+							mui('.mui-btn').button('reset');
+						}
+					}, 1000);
+				})
+			})
+		</script>
+	</body>
+
+</html>

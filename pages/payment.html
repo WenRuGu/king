@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/style.css"/>
+		<link rel="stylesheet" href="../css/payment.css" />
+		<link rel="stylesheet" type="text/css" href="../css/iconfont.css"/>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">立即付款</h1>
+		</header>
+		<div class="mui-content">
+			<p>订单详情</p>
+			<ul class="mui-table-view">
+			    <li class="view-cell">商品名称：
+					<span class="mui-pull-right goods-title"></span>
+			    </li>
+			    <li class="view-cell">商品数量：
+					<span class="mui-pull-right amount"></span>
+			    </li>
+			    <li class="view-cell">商品价格：
+					<span class="mui-pull-right goods-price"></span>
+			    </li>
+				<li class="view-cell">商品总价：
+					<span class="mui-pull-right total"></span>
+				</li>
+			</ul>
+			<p>支付方式</p>
+			<ul class="mui-table-view pay-mo">
+				<li class="mui-table-view-cell">
+			    	<div class="mui-input-row mui-checkbox" data-test='balance'>
+			    		余额
+			    		<span class="mui-icon iconfont check icon-checkbox"></span>
+					</div>
+			    </li>
+			    <li class="mui-table-view-cell">
+			    	<div class="mui-input-row mui-checkbox" data-test='wxpay'>
+					 	 微信支付
+			    		<span class="mui-icon iconfont icon-checkbox1"></span>
+					</div>
+			    </li>
+			    <li class="mui-table-view-cell">
+			    	<div class="mui-input-row mui-checkbox" data-test='alipay'>
+					  	支付宝钱包
+			    		<span class="mui-icon iconfont icon-checkbox1"></span>
+					</div>
+			    </li>
+			</ul>
+			<button type="button" class="mui-btn mui-btn-primary pay">立即付款</button>
+			
+		</div>
+		
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script src="../js/payment.js"></script>
+	</body>
+
+</html>

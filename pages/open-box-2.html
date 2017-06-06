@@ -1,0 +1,147 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<style>
+			body{
+				background: #fff;
+			}
+			.mui-bar{
+				background: #fff;
+			}
+			p{
+				width: 100%;
+				text-align: center;
+				margin-bottom: 0;
+			}
+			.first-p{
+				float: left;
+				margin-top: 1.2rem;
+				width: 100%;
+				height: 0.68rem;
+				line-height: 0.68rem;
+				text-align: center;
+				font-size: 0.4rem;
+				color: #333;
+			}
+			.none{
+				opacity: 0;
+			}
+			span.mui-pull-right{
+				font-size: 0.26rem;
+				color: #888;
+				line-height: 0.8rem;
+				margin-right: 0.5rem;
+			}
+			span.mui-pull-left{
+				font-size: 0.26rem;
+				color: #888;
+				line-height: 0.8rem;
+				margin-left: 0.5rem;
+			}
+			.first-pic{
+				position: relative;
+				width: 2rem;
+				height: 1.94rem;
+				margin-top: 1rem;
+				left: 50%;
+				margin-left: -1rem;
+			}
+			.p1{
+				margin-top: 0.9rem;
+				font-size: 0.32rem;
+				color: #000;
+			}
+			.p2{
+				padding: 0 1.7rem;
+				margin-top: 0.3rem;
+				font-size: 0.28rem;
+			}
+			.p3{
+				position: absolute;
+				height: 0.6rem;
+				line-height: 0.6rem;
+				bottom: 1rem;
+				font-size: 0.3rem;
+			}
+			.again{
+				color: #38f;
+			}
+			.box{
+				font-size: 0.34rem;
+				color:#333;
+				margin-top: 0.6rem;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <h1 class="mui-title">换电</h1>
+		</header>
+		<p class="first-p">
+			<span class="mui-pull-left">第一步</span>
+			第二步
+			<span class="mui-pull-right">第三步</span>
+		</p>
+		<img class="first-pic" src="../img/code-2.png"/>
+		<p class="box"><span>箱子编号：</span><span class="box-num"></span></p>
+		<p class="p1">取出新电池</p>
+		<p class="p2">请取出已打开箱门内的新电池，取出后请关闭箱门</p>
+		<p class="p3">若箱门未打开或已关闭 请点击 <span class="again">重新开箱</span></p>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			
+			var localstorage = window.localStorage;
+			var scan_ip = localstorage.getItem('ip');
+			mui.plusReady(function() {
+				var self = plus.webview.currentWebview();
+				var box_num = document.getElementsByClassName('box-num')[0];
+				function isOpen(){
+					token = localstorage.getItem('token');
+					mui.post( scan_ip+'/api/v1/hdw/cabinet/open_full_box',{
+							token: token,
+							cabinetId: self.code,
+							orderId: self.orderId
+						}, function(data){
+							console.log(JSON.stringify(data));
+							if ( data.code == 0) {
+								box_num.innerHTML = data.data.boxNum;
+								mui.toast('成功打开满电箱门');
+								setTimeout(function(){
+									mui.openWindow({
+										id:'open-box-3.html',
+										url: 'open-box-3.html',
+										show: {
+											aniShow: 'slide-in-right'
+										},
+										styles: {
+											popGesture: 'close'
+										},
+										waiting: {
+											autoShow: false
+										}
+									});
+								}, 2000)
+							} else {
+								mui.toast(data.message);
+							}
+						},'json'
+					)
+				}
+				isOpen();
+				
+				mui('.again')[0].addEventListener('tap', function() {
+					isOpen();
+				})
+			})
+		</script>
+	</body>
+
+</html>

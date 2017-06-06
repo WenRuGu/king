@@ -1,0 +1,334 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<<link href="../css/mui.poppicker.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/mui.picker.min.css" />
+		<style>
+			html,body{
+				width:100%;
+				height:100%;
+			}
+			.mui-bar{
+				background: #fff;
+			}
+			a{
+				color: #333;
+			}
+			.mui-bar .mui-title{
+				left: 60px;
+				right: 60px;
+			}
+			.mui-bar-nav~.mui-content{
+				padding-top: 20px;
+			}
+			.keep{
+				display: block;
+				width: 60px;
+				height: 44px;
+				text-align: center;
+				line-height: 44px;
+				font-size: 16px;
+			}
+			.mui-table-view-cell{
+				height: 1.1rem;
+				padding:0;
+			}
+			.mui-table-view-cell>a:not(.mui-btn){
+				margin: 0;
+			}
+			.mui-table-view-cell span{
+				float: left;
+				width: 28%;
+				height: 1.1rem;
+				line-height: 1.1rem;
+				text-align: left;
+				padding-left: 0.3rem;
+				font-size: 0.3rem;
+				color: #333;
+			}
+			.mui-table-view-cell input{
+				float: left;
+				width: 72%;
+				height: 1.1rem;
+				font-size: 0.3rem;
+				border:0;
+				padding:0;
+				margin: 0;
+			}
+			.str{
+				width: 100%;
+				height: 2.4rem;
+				border: none;
+				font-size: 0.28rem;
+			}
+			.switch{
+				width: 100%;
+				height: 1.1rem;
+				line-height: 1.1rem;
+				background: #fff;
+				font-size: 0.3rem;
+				padding:0 0.3rem;
+			}
+			.mui-switch-mini{
+				margin-top: 0.22rem;
+				float: right;
+			}
+			.ui-alert {
+				text-align: center;
+				padding: 20px 10px;
+				font-size: 16px;
+			}
+			.mui-btn, button{
+				-webkit-transition: none;
+				transition: none;
+			}
+			.keep-address{
+				width: 90%;
+				height: 0.9rem;
+				margin-left: 5%;
+				font-size: 0.32rem;
+				color: #fff;
+				margin-top: 1rem;
+				border:none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">添加新地址</h1>
+		    <!--<a class="mui-pull-right keep">保存</a>-->
+		</header>
+		<div class="mui-content">
+			<ul class="mui-table-view">
+			    <li class="mui-table-view-cell">
+			    	<span>收件人</span>
+			    	<input type="text" name="" class="contact"  placeholder="请输入收件人"/>
+			    </li>
+			    <li class="mui-table-view-cell">
+			    	<span>联系电话</span>
+			    	<input type="number" name="" class="tel"  placeholder="请输入手机号或固定电话"/>
+			    </li>
+			     <li class="mui-table-view-cell">
+			    	<a href="javascript:;" class="mui-navigate-right">
+				    	<span>所在地区</span>
+				    	<input type="text" name="" class="showCityPicker3"  placeholder="请选择省市区"/>
+			    	</a>
+			    </li>
+			</ul>
+			<textarea class="str" placeholder="请填写详细地址"></textarea>
+			
+			<div class="switch">
+				设为默认
+				<div class="mui-switch mui-switch-blue mui-switch-mini">
+					<div class="mui-switch-handle"></div>
+				</div>
+			</div>
+			<button type="button" data-loading-text="提交中" class="mui-btn mui-btn-primary keep-address">保存</button>
+		</div>
+		<div id='cityResult3' class="ui-alert"></div>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script src="../js/mui.picker.min.js"></script>
+		<script src="../js/mui.poppicker.js"></script>
+		<!--<script src="../js/city.data.js" type="text/javascript" charset="utf-8"></script>-->
+		<script src="../js/city.data-3.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			mui.init();
+			(function($, doc){
+				var items_1 = '';     // 省 直辖市
+				var items_2 = '';	  // 市
+				var items_3 = '';	  // 县区
+				var defaultFlag;
+				var keep = doc.getElementsByClassName('keep-address')[0];
+				var contact = doc.getElementsByClassName('contact')[0];
+				var tel = doc.getElementsByClassName('tel')[0];
+				var str = doc.getElementsByClassName('str')[0];
+				var title = doc.getElementsByClassName('mui-title')[0];
+				var mui_switch = doc.getElementsByClassName('mui-switch')[0];
+				var flag;
+				var address_str = '';
+				var token;
+				var c_id = '';
+				var re_m = /^1[3|4|5|7|8][0-9]\d{9}$/;      // 验证手机号
+				var rx = /^(0\d{2,3}-?)?\d{7,8}$/;			// 验证固话
+				var showCityPickerButton = doc.getElementsByClassName('showCityPicker3')[0];
+				
+				var localstorage = window.localStorage;  
+				var add_ip = localstorage.getItem('ip');
+				$.plusReady(function() {
+					var self = plus.webview.currentWebview();
+					self.setStyle({
+						scrollIndicator: 'none'
+					})
+					c_id = self.bj_id;
+					var c_addressName = self.addressName;
+					var c_tel = self.tel;
+					var c_city_detail = self.city_detail;
+					var c_street_detail = self.street_detail;
+					var c_default_flag = self.default_flag;
+					var c_province = self.bj_province;
+					var c_city = self.bj_city;
+					var c_district = self.bj_district;
+					
+					var path;
+					if (typeof(c_addressName) != 'undefined') {   			// 修改页面
+						title.innerHTML = '修改地址';
+						contact.value = c_addressName;
+						tel.value = c_tel;
+						
+						showCityPickerButton.value = c_city_detail;
+						str.value = c_street_detail;
+						if ( c_default_flag == 1 ) {
+							mui_switch.classList.add('mui-active');
+						}
+					}
+					
+					str.addEventListener('input', function() {
+						var maxChars = 250; 				// 限制输入字符
+						if ( str.value.length > 250 ) {
+							str.value = str.value.substring(0,maxChars);
+							$.toast('情输入2-15位字符');
+							return false;
+						}
+					})
+					
+					var cityPicker3 = new $.PopPicker({
+						layer: 3
+					});
+					cityPicker3.setData(cityData3);
+					showCityPickerButton.addEventListener('tap', function(event) {
+						cityPicker3.show(function(items) {
+							address_str = showCityPickerButton.value = 　(items[0] || {}).text + (items[1] || {}).text + (items[2] || {}).text;
+							items_1 = items[0].value;
+							items_2 = items[1].value;
+							items_3 = items[2].value;
+							console.log(items_1+','+items_2+','+items_3);
+							//返回 false 可以阻止选择框的关闭
+	//							return false;
+						});
+					}, false);
+					
+					keep.addEventListener('tap', function() {
+						token = localstorage.getItem('token');
+						if ( contact.value == '' ) {
+							plus.nativeUI.alert( "收件人不能为空", function(){}, '', "确定" );
+							return;
+						} else if( contact.value.length < 2 ||  contact.value.length > 15){
+							plus.nativeUI.alert( "收件人姓名：2-15位字符限制", function(){}, '', "确定" );
+							return;
+						}
+						if ( tel.value == '') {
+							plus.nativeUI.alert( "联系电话不能为空", function(){}, '', "确定" );
+							return;
+						} else if ( tel.value.length > 11 ){
+							plus.nativeUI.alert( "联系电话：最多11位字符", function(){}, '', "确定" );
+							return;
+						}
+						if ( showCityPickerButton.value == '' ) {
+							plus.nativeUI.alert( "省市区不能为空", function(){}, '', "确定" );
+							return;
+						}
+						if ( str.value == '') {
+							plus.nativeUI.alert( "详细地址不能空", function(){}, '', "确定" );
+							return;
+						}
+						if ( flag == 'true' ) {		// 默认判断 1 是默认
+							defaultFlag = 1;
+						} else {
+							defaultFlag = 0;
+						}
+						if ( c_id == '' ) {
+							plus.nativeUI.alert( "请重新编辑", function(){}, '', "确定" );
+							return;
+						}
+						if ( localstorage.getItem('default_address') == 'false' ) {
+							defaultFlag = 1;
+						}
+ 						var data = {};
+ 						mui('.keep-address').button('loading');
+						if (typeof(c_addressName) != 'undefined') {   	
+							path = '/api/v1/basic/address_book/update';
+							data = {
+								token: token,
+								id:c_id,
+								province:c_province,
+								city:c_city,
+								district:c_district,
+								street: str.value,
+								contact: contact.value,
+								tel: tel.value,
+								defaultFlag: defaultFlag
+							}
+						} else {
+							path = '/api/v1/basic/address_book/create';
+							data = {
+								token: token,
+								province:items_1,
+								city:items_2,
+								district:items_3,
+								street: str.value,
+								contact: contact.value,
+								tel: tel.value,
+								defaultFlag: defaultFlag
+							}
+						}
+						console.log(JSON.stringify(data));
+						console.log(path);
+						mui.ajax( add_ip+path,{
+							data:data,
+							dataType:'json',
+							type:'post',
+							timeout:10000,	             
+							success:function(item){
+								console.log(JSON.stringify(item));
+								if ( item.code == 0 ) {
+									plus.nativeUI.toast('保存成功');
+									$.fire(plus.webview.getWebviewById('address.html'),'update-address',{}); // address页
+									$.fire(plus.webview.getLaunchWebview(),'update-default-address',{});   // main页 刷新默认地址
+									setTimeout(function() {
+										mui('.keep-address').button('reset');
+										plus.webview.close(self);
+									},300);
+								} else {
+									mui('.keep-address').button('reset');
+									if ( path == '/api/v1/basic/address_book/create' ) {
+										plus.nativeUI.alert('添加失败');
+									} else {
+										plus.nativeUI.alert('修改失败');
+									}
+								}
+							},
+							error:function(xhr,type,errorThrown){
+								//异常处理；
+								mui('.keep-address').button('reset');
+								if ( path == '/api/v1/basic/address_book/create' ) {
+									plus.nativeUI.alert('添加失败');
+								} else {
+									plus.nativeUI.alert('修改失败');
+								}
+							}
+						});
+					})
+				})
+					
+				mui('.mui-content .mui-switch').each(function() { //循环所有toggle
+					flag = this.classList.contains('mui-active') ? 'true' : 'false';
+		
+					this.addEventListener('toggle', function(event) {
+						//event.detail.isActive 可直接获取当前状态
+						flag = event.detail.isActive ? 'true' : 'false';
+						console.log(flag);
+					});
+				});
+			}(mui, document))
+		</script>
+	</body>
+
+</html>

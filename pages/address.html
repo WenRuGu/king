@@ -1,0 +1,330 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<link rel="stylesheet" href="../css/iconfont.css" />
+		<style type="text/css">
+			html,body{
+				width: 100%;
+				height: 100%;
+			}
+			body{
+				background: #f5f5f5;
+			}
+			.mui-btn, button{
+				-webkit-transition: none;
+				transition: none;
+			}
+			.mui-bar-nav~.mui-content{
+				background: #f5f5f5;
+				/*position: relative;
+				padding: 0;
+				top: 44px;
+				bottom: 1rem;*/
+			}
+			.mui-bar{
+				background: #fff;
+			}
+			a{
+				color: #333;
+			}
+			.add-address{
+				position: fixed;
+				bottom: 0;
+				z-index: 99;
+				width: 100%;
+				height: 1rem;
+				background: #38f;
+				/*text-align: center;*/
+				font-size: 0.34rem;
+				color: #fff;
+				border-radius: 0;
+			}
+			.mui-scroll-wrapper{
+				top:44px;
+				bottom: 1rem;
+			}
+			p,ul{
+				padding:0;
+				margin: 0;
+			}
+			.add-li{
+				list-style: none;
+				width: 100%;
+				height: auto;
+				background: #fff;
+				margin-bottom: 0.2rem;
+			}
+			.add-li p:nth-child(1) {
+				padding: 0.3rem 0.3rem;
+			}
+			.add-li p:nth-child(1) span{
+				font-size: 0.28rem;
+				color: #333;
+			}
+			.address{
+				height: auto;
+				border-bottom: 0.01px solid #ECECEC;
+				padding: 0 0.3rem 0.2rem 0.3rem;
+				line-height: 0.34rem;
+				font-size: 0.3rem;
+				color: #333;
+			}
+			.checkbox{
+				width: 100%;
+				height: 0.9rem;
+				padding: 0 0.3rem 0 0.3rem;
+			}
+			.checkbox span{
+				display: block;
+				height: 0.9rem;
+				line-height: 0.9rem;
+				font-size: 0.38rem;
+			}
+			.checkbox span a{
+				height: 0.9rem;
+				line-height: 0.9rem;
+				margin-left: 0.1rem;
+				margin-top: -0.08rem;
+				font-size: 0.26rem;
+			}
+			.add-active{
+				color: #38f;
+			}
+			.add-active a{
+				color: #38f;
+			}
+			.icon-bianji{
+				margin-right: 0.4rem;
+			}
+			.icon-shanchu{
+				line-height: 0.92rem !important;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">地址簿</h1>
+		</header>
+			<div class="mui-scroll-wrapper">
+				<div class="mui-scroll">
+					<ul class="add-ul">
+						<!--
+						<li class="add-li">
+							<p><span class="addressName">安徽省大会开始奥斯卡接电话阿达</span><span class="mui-pull-right addressMobile">12345678910</span></p>
+							<p class="address"><span class="city_detail">阿达</span><span class="street">的官方公布</span></p>
+							<div class="checkbox">
+								<span class="mui-icon iconfont icon-checkbox1 mui-pull-left check"><a href="javascript:;">默认地址</a></span>
+								<span class="mui-icon iconfont icon-shanchu mui-pull-right "><a href="javascript:;">删除</a></span>
+								<span class="mui-icon iconfont icon-bianji mui-pull-right "><a href="javascript:;">编辑</a></span>
+							</div>
+						</li>-->
+					</ul>
+				</div>
+			</div>
+		<button type="button" class="mui-btn mui-btn-primary add-address">新增地址</button>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			(function($,doc) {
+				var add_address = doc.getElementsByClassName('add-address')[0];
+				var add_ul = doc.getElementsByClassName('add-ul')[0];
+				var add_li = doc.getElementsByClassName('add-li');
+				var token;
+				
+				var localstorage = window.localStorage; 
+				var address_ip = localstorage.getItem('ip');
+				
+				$('.mui-scroll-wrapper').scroll({
+					deceleration: 0.0005 
+				});
+				$.plusReady(function() {
+					function update() {
+						token = localstorage.getItem('token');
+						$.post( address_ip+'/api/v1/basic/address_book/list',{
+								token: token
+						},function(data){
+							console.log('updata = '+JSON.stringify(data));
+								if ( data.code == 0 ) {
+									var fragment = document.createDocumentFragment();
+									add_ul.innerHTML = '';
+									$.each( data.data, function( index, item) {
+										var default_txt = '设为默认';
+										var li = document.createElement('li');
+										var check_class = 'mui-icon iconfont icon-checkbox1 check mui-pull-left';
+										if ( item.defaultFlag == 1 ) {
+											check_class = 'mui-icon iconfont icon-checkbox mui-pull-left check add-active';
+											default_txt = '默认地址';
+										}
+										li.className = 'add-li';
+										li.setAttribute('data-id', item.id);
+										li.setAttribute('data-province', item.province);
+										li.setAttribute('data-city', item.city);
+										li.setAttribute('data-district', item.district);
+										li.innerHTML = '<p><span class="addressName">'+ item.contact +'</span><span class="mui-pull-right addressMobile">'+ item.tel +'</span></p>'
+											+ '<p class="address"><span class="city_detail">'+ item.provinceName + item.cityName + item.districtName +'</span> <span class="street">'+ item.street +'</span></p>'
+											+ '<div class="checkbox">'
+											+ '<span class="'+ check_class +'"><a href="javascript:;">'+ default_txt +'</a></span>'
+											+ '<span class="mui-icon iconfont icon-shanchu mui-pull-right "><a href="javascript:;">删除</a></span>'
+											+ '<span class="mui-icon iconfont icon-bianji mui-pull-right "><a href="javascript:;">编辑</a></span>'
+											+ '</div>';
+										fragment.appendChild(li);
+									});
+									add_ul.appendChild(fragment);
+								}
+							},'json'
+						);
+					}
+					update();  // 初始请求
+					
+					window.addEventListener('update-address',function(event) {  // add_address页 更新
+						plus.nativeUI.closeWaiting();
+						update();
+						$.fire(plus.webview.getWebviewById('mall-address.html'),'update-mall-address',{ 
+							address:true
+						});
+					});
+					
+					$('.add-ul').on('tap', '.check', function() {    // 设置默认地址
+
+						token = localstorage.getItem('token');
+						var a = this.querySelector('a');
+						var address_id = this.parentNode.parentNode.getAttribute('data-id');
+						var address_province = this.parentNode.parentNode.getAttribute('data-province');
+						var address_city = this.parentNode.parentNode.getAttribute('data-city');
+						var address_district = this.parentNode.parentNode.getAttribute('data-district');
+						var address_street = this.parentNode.parentNode.querySelector('.street').innerHTML;
+						var address_contact = this.parentNode.parentNode.querySelector('.addressName').innerHTML;
+						var address_tel = this.parentNode.parentNode.querySelector('.addressMobile').innerHTML;
+						
+						mui.post(address_ip+'/api/v1/basic/address_book/update',{
+								token: token,
+								id: address_id,
+								province: address_province,
+								city:address_city,
+								district:address_district,
+								street: address_street,
+								contact:address_contact,
+								tel: address_tel,
+								defaultFlag: 1
+						},function(data){
+							console.log(JSON.stringify(data));
+								if ( data.code == 0) {
+									$.fire(plus.webview.getLaunchWebview(),'update-default-address',{
+										address:true
+									});
+									$.fire(plus.webview.getWebviewById('mall-address.html'),'update-mall-address',{
+										address:true
+									});
+									plus.nativeUI.toast('设置成功');
+									update();
+								} else {
+									plus.nativeUI.alert('设置失败');
+								}
+							},'json'
+						);
+					});
+					$('.add-ul').on('tap', '.icon-shanchu', function() {         	// 删除地址
+						var that = this;
+						plus.nativeUI.confirm('确认要删除该地址吗？',function(e) {
+							if ( e.index == 0 ) {
+								var parent_li = that.parentNode;
+								console.log(parent_li);
+								console.log( that.parentNode.parentNode);
+								var isFlag = parent_li.querySelector('span:nth-child(1)').classList.contains('add-active');
+
+								var clearId = that.parentNode.parentNode.getAttribute('data-id');
+								mui.post( address_ip+'/api/v1/basic/address_book/delete',{
+										token: token,
+										id: clearId
+									},function(data){
+										console.log(JSON.stringify(data));
+										if ( data.code == 0 ) {
+											update();
+											plus.nativeUI.toast('删除成功');
+										} else if ( data.code == 2 ) {
+											plus.nativeUI.alert('默认地址不能删除');
+										}
+									},'json'
+								);
+							}
+						},'',['确认','取消']);
+					});
+					
+					$('.add-ul').on('tap','.icon-bianji',function() {			// 修改地址
+						var parent_li = this.parentNode.parentNode;
+						var bj_province = parent_li.getAttribute('data-province');
+						var bj_city = parent_li.getAttribute('data-city');
+						var bj_district = parent_li.getAttribute('data-district');
+						var bj_id = parent_li.getAttribute('data-id');
+						var name = parent_li.querySelector('.addressName').innerHTML;
+						var tel = parent_li.querySelector('.addressMobile').innerHTML;
+						var city_detail = parent_li.querySelector('.city_detail').innerHTML;
+						var street_detail = parent_li.querySelector('.street').innerHTML;
+						var default_flag = this.parentNode.querySelector('.check').classList.contains('add-active') ? 'true' : 'false';
+						
+						console.log(bj_id);
+						if ( default_flag == 'true') {
+							default_flag = 1;
+						} else {
+							default_flag = 0;
+						}
+						$.openWindow({
+							id: 'add_address.html',
+							url: 'add_address.html',
+							show: {
+								aniShow: 'pop-in',
+								duration: 200
+							},
+							styles: {
+								popGesture: 'close'
+							},
+							waiting: {
+								autoShow: false
+							},
+							extras: {
+								bj_id: bj_id,
+								addressName: name,					// 收件人
+								tel: tel,							// 电话
+								city_detail: city_detail,			// 大概地址
+								street_detail: street_detail,		// 详细地址
+								default_flag:default_flag,			// 是否默认
+								bj_province:bj_province,			// 省编码
+								bj_city:bj_city,					// 市编码
+								bj_district:bj_district				// 区县编码
+							}
+						});
+					})
+					
+					add_address.addEventListener('tap', function() {		// 添加地址
+						$.openWindow({
+							id: 'add_address.html',
+							url: 'add_address.html',
+							show: {
+								aniShow: 'slide-in-right'
+							},
+							styles: {
+								popGesture: 'close'
+							},
+							waiting: {
+								autoShow: false
+							},
+							extras: {
+								default_add:1
+							}
+						});
+					});
+
+				});
+			}(mui,document))
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<style>
+			body{
+				background: #F5F5F5;
+			}
+			a{
+				color: #333;
+			}
+			.mui-btn,button{
+				-webkit-transition: none;	
+				transition: none;
+			}
+			.mui-bar{
+				
+				background: #fff;
+			}
+			.submit{
+				width: 90%;
+				height: 0.9rem;
+				margin-left: 5%;
+				font-size: 0.32rem;
+				color: #fff;
+				margin-top: 0.5rem;
+				border:none;
+			}
+			.question{
+				width: 6.9rem;
+				height: 5rem;
+				margin-top: 1.2rem;
+				margin-left: 0.3rem;
+				height: 4rem;
+				font-size: 0.3rem;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left"></a>
+		    <h1 class="mui-title">意见反馈</h1>
+		</header>
+		<textarea class="mui-input-clear question" placeholder="请详细描述你的问题和意见..."></textarea>
+		<button type="button" class="mui-btn mui-btn-primary submit" disabled="disabled">提交</button>
+		<script src="../js/mui.min.js"></script>
+		<script src="../js/style-size.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			var localstorage = window.localStorage;  
+			var token;
+			
+			var fee_ip = localstorage.getItem('ip');
+			mui.plusReady(function() {
+				var txt = document.getElementsByClassName('question')[0];
+				var submit_btn = document.getElementsByClassName('submit')[0];
+				var self = plus.webview.currentWebview();
+				txt.addEventListener('input', function() {
+					if ( txt.value == '' ) {
+						submit_btn.setAttribute('disabled', 'disabled');
+					} else {
+						submit_btn.disabled = false;
+					}
+				})
+				
+				submit_btn.addEventListener('tap', function() {
+					token = localstorage.getItem('token');  
+					if ( txt.value == '' ) {
+						plus.nativeUI.toast('请输入您的意见');
+						return;
+					}
+					plus.nativeUI.showWaiting();
+					mui.post( fee_ip+'/api/v1/basic/feedback/create',{
+							token: token,
+							content:txt.value
+					},function(data){
+						console.log(JSON.stringify(data));
+							if ( data.code == 0) {
+								setTimeout(function() {
+									plus.nativeUI.closeWaiting();
+									plus.nativeUI.toast('提交成功');
+									plus.webview.close(self);	
+								},500)
+							} else {
+								plus.nativeUI.alert('提交失败');
+							}
+						},'json'
+					);
+				});
+			});
+			
+		</script>
+	</body>
+
+</html>

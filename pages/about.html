@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<link href="../css/mui.min.css" rel="stylesheet" />
+		<style type="text/css">
+			body{
+				background: #F5F5F5;
+			}
+			.mui-bar{
+				background: #fff;
+			}
+		</style>
+	</head>
+	<body>
+		<header class="mui-bar mui-bar-nav">
+		    <a class="mui-action-back mui-icon mui-icon-left-nav mui-pull-left" style="color:#333;"></a>
+		    <h1 class="mui-title">关于我们</h1>
+		</header>
+		<script src="../js/mui.min.js"></script>
+		<script type="text/javascript">
+			var localstorage = window.localStorage; 
+			var about = localstorage.getItem('aboutUrl');
+				mui.init({
+				    subpages:[{
+				      url:about,
+				      id:'about',
+				      styles:{
+				        top:'45px',
+				        bottom:'0px'
+				      }
+				    }]
+				 });
+		</script>
+	</body>
+</html>

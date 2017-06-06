@@ -1,0 +1,112 @@
+body{
+	background: #F5F5F5;
+}
+.mui-btn, button{
+	-webkit-transition: none;
+	transition: none;
+}
+
+.mui-content > p{
+	height: 0.6rem;
+	line-height: 0.6rem;
+	text-indent: 0.3rem;
+	font-size: 0.26rem;
+	color: #999;
+}
+.mui-content ul:nth-child(2) {
+	margin: 0;
+	padding:0;
+	background-color: #fff;
+}
+.mui-content ul:nth-child(2) li, .mui-content ul:nth-child(4) li{
+	font-size: 0.3rem;
+	color: #333;
+}
+.view-cell{
+	position: relative;
+    overflow: hidden;
+    padding: 11px 15px;
+    -webkit-touch-callout: none
+}
+.view-cell:after{
+	position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 15px;
+    height: 1px;
+    content: '';
+    -webkit-transform: scaleY(.5);
+    transform: scaleY(.5);
+    background-color: #c8c7cc;
+}
+.goods-num, .seller{
+	color: #888;
+}
+.total{
+	color: #f60;
+}
+.goods-price{
+	color:#f60;
+}
+.icon-checkbox1{  
+	font-size: 15px!important;
+}
+.mui-input-row{
+	/*padding: 0;*/
+	height: 1.1rem;
+	line-height: 1.1rem;
+	font-size: 0.3rem;
+}
+.mui-input-row span{
+	float: right;
+	margin-right: 5%;
+	line-height: 1.1rem;
+	color: #888;
+}
+.check{
+	color: #3bca3d !important;
+}
+.mui-table-view li:nth-child(1) div{
+	padding-left: 1.2rem;
+	background: url(../img/balance-icon.png) no-repeat 0.4rem 0.24rem;
+	background-size: 0.6rem 0.6rem;
+}
+.mui-table-view li:nth-child(2) div{
+	padding-left: 1.2rem;
+	background: url(../img/weixin.png) no-repeat 0.4rem 0.24rem;
+	background-size: 0.6rem 0.6rem;
+}
+
+.mui-table-view li:nth-child(3) div{
+	padding-left: 1.2rem;
+	background: url(../img/zhifu.png) no-repeat 0.4rem 0.24rem;
+	background-size: 0.6rem 0.6rem;
+}
+.mui-content ul:nth-child(4) .mui-table-view-cell{
+	padding:0;
+}
+.pay{
+	width: 90%;
+	margin-top: 1rem;
+	height: 0.8rem;
+	margin-left: 5%;
+	font-size: 0.3rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
