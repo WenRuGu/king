@@ -202,7 +202,7 @@
 			 	function charge_yh() {        // 充值优惠的信息
 			 		token = localstorage.getItem('token');
 				 	mui.get( rech_ip+'/api/v1/basic/customer_deposit_gift/list',{token: token},function(data){
-							console.log(JSON.stringify(data));
+//							console.log(JSON.stringify(data));
 							if ( data.code == 0 ) {
 								var div;
 								var fragment = document.createDocumentFragment();
@@ -312,10 +312,10 @@
 									})
 									plus.nativeUI.alert('支付成功!',function(){
 										plus.webview.close(self);
-									},'','确定');
+									},'提示','确定');
 								},function(e){
 									console.log(e.code+','+e.message);
-//									plus.nativeUI.alert('提醒', null, '支付失败：'+e.code);
+									plus.nativeUI.alert('提醒', null, '支付失败：'+e.code);
 								});
 							} else {
 								plus.nativeUI.alert('支付失败',function() {},'','确定');

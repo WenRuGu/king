@@ -85,14 +85,36 @@ mui.init();
 		})
 		var version = update.querySelector('span');
 		version.innerHTML = '当前版本'+plus.runtime.version;
+		function compareVersion( ov, nv ){
+			if ( !ov || !nv || ov=="" || nv=="" ){
+				return false;
+			}
+			console.log(typeof ov);
+			console.log(typeof nv);
+			var b=false,
+			ova = ov.split(".",4),
+			nva = nv.split(".",4);
+			for ( var i=0; i<ova.length&&i<nva.length; i++ ) {
+				var so=ova[i],no=parseInt(so),sn=nva[i],nn=parseInt(sn);
+				if ( nn>no || sn.length>so.length  ) {
+					return true;
+				} else if ( nn<no ) {
+					return false;
+				}
+			}
+			if ( nva.length>ova.length && 0==nv.indexOf(ov) ) {
+				return true;
+			}
+		}
 		update.addEventListener('tap', function() {
 			wainshow();
 			if ( !network_flag ) {
 				mui.toast('检查更新失败，请稍后再试');
 				return;
 			}
-			if ( localstorage.getItem('version') ==  plus.runtime.version ) {
-				mui.toast('当前已经是最新版本了')
+			var isUpdate = compareVersion(plus.runtime.version,localstorage.getItem('version'));
+			if ( isUpdate == undefined || isUpdate == false ) {
+				mui.toast('当前已经是最新版本了');
 				return;
 			}
 			plus.nativeUI.confirm('修复一些bug，app使用更流畅',function(e) {
@@ -109,7 +131,7 @@ mui.init();
 										} else {
 											plus.nativeUI.alert('下载失败');
 										}
-									})
+									});
 								} else {
 //									var url = encodeURI(data.data.ios);
 									plus.runtime.openURL( data.data.ios );

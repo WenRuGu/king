@@ -200,7 +200,10 @@
 							if ( address != '' || address != undefined) {            //  h5+ 地理位置信息
 								msg.body = '您好！我的车出现了些问题，需要您来救援，我的位置在'+ address +'，谢谢。';
 							} else {						// 百度地理位置信息
-								msg.body = '您好！我的车出现了些问题，需要您来救援，我的位置在1'+ place +'，谢谢。';
+								if ( place == '' || place == null || place == undefined) {
+									place == '';
+								}
+								msg.body = '您好！我的车出现了些问题，需要您来救援，我的位置在'+ place +'，谢谢。';
 							}
 							
 							plus.messaging.sendMessage( msg );

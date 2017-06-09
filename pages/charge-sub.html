@@ -34,7 +34,7 @@
 					<span class="map-point-title-b">{{item.cabinetName}}</span>
 					<a href="javascript:;" class="map-point-local mui-pull-right">
 						<span class="point-km"></span>
-						<span class="km">{{item.distance | km: item.distance}}km</span>
+						<span class="km">{{item.distance | km: item.distance}}</span>
 					</a>
 				</p>
 				<p class="carspace">
@@ -84,10 +84,8 @@
 			function wainshow() {
 			    if (plus.networkinfo.getCurrentType() == plus.networkinfo.CONNECTION_NONE) {
 			    	network_flag = false;
-					slide.style.display = 'none';
 			    } else {
 					network_flag = true;
-					slide.style.display = 'block';
 			    }
 			}
 			$.plusReady(function() {
@@ -130,19 +128,19 @@
 						}
 					}
 				});
-				template.helper('km', function(m) {
-					return (m/1000).toFixed(2);
-				});
-//				template.helper('km', function( km ) {
-//						if(km == 0){
-//							return "";
-//						}else if(km < 1000){
-//							 var dis = parseFloat(km);
-//							return dis.toFixed(1)+"m";
-//						}else{
-//							return Number(km/1000).toFixed(1)+"km";
-//						}
+//				template.helper('km', function(m) {
+//					return (m/1000).toFixed(2)+'km';
 //				});
+				template.helper('km', function( km ) {
+					if(km == 0){
+						return "";
+					}else if(km < 1000){
+						 var dis = parseFloat(km);
+						return dis.toFixed(0)+"m";
+					}else{
+						return Number(km/1000).toFixed(1)+"km";
+					}
+				});
 				var createFragment = function() {
 					token = localstorage.getItem('token');
 					if ( lng == undefined ) {

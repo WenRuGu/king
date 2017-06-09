@@ -1302,7 +1302,9 @@
 			"pages/net-error.html": {
 				"resources": [
 					"css/mui.min.css",
-					"img/no-network.png"
+					"img/no-network.png",
+					"js/mui.min.js",
+					"js/style-size.js"
 				],
 				"refer": [],
 				"priority": 0

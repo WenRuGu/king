@@ -431,7 +431,7 @@ mui.plusReady(function() {
 	window.addEventListener('msg-old', function(event) {          // 消息提示 小红点
 		msg_s.classList.remove('msg-pormpt');
 	});
-	window.addEventListener('update-network', function(event) {
+	window.addEventListener('update-network', function(event) {		
 	 	network();
 	});
 	var activeTab = 'pages/tab-webview-subpage-charge.html';
@@ -469,6 +469,7 @@ mui.plusReady(function() {
 			plus.webview.show('pages/bottom-main.html');
 			activeTab = targetTab;
 		} else {
+			console.log('aaaaa');
 			if (targetTab == 'pages/tab-webview-subpage-setting.html') {
 				plus.webview.show('pages/tab-webview-subpage-setting.html');
 				plus.webview.hide('pages/net-error.html');
