@@ -47,29 +47,28 @@ mui.init();
 		    }
 		}
 		function info() {
-			realName.innerHTML = localstorage.getItem('realName'); // 真实姓名
+			realName.innerHTML = localstorage.getItem('realName'); 	// 真实姓名
 			phone.innerHTML = localstorage.getItem('mobile');       // 手机号
 			nickname.innerHTML = localstorage.getItem('nickname');  // 昵称
-			sex.innerHTML = localstorage.getItem('gender');        // 性别
+			sex.innerHTML = localstorage.getItem('gender');       	// 性别
 			setTimeout(function(){
 				user_pic.setAttribute('data-src',localstorage.getItem('portrait'));
 				lazyImg.lazyLoad( true );
-			}, 125);    						//  本地读取 头像时候，动画 比较卡
+			}, 125);    										//  本地读取 头像时候，动画 比较卡
 		}
 		info();
 		wainshow();
 		$.previewImage();    // 预览头像 初始化
-		window.addEventListener('second-reload', function(e) { // 仅退出登录第一次才能监听到
-			info();											   // 防止换账号后第一次显示的是原有的信息
-			user_pic.src = localstorage.getItem('portrait');   // 由于退出换账号，personal-info页只是隐藏
+		window.addEventListener('second-reload', function(e) {  // 仅退出登录第一次才能监听到
+			info();											    // 防止换账号后第一次显示的是原有的信息
+			user_pic.src = localstorage.getItem('portrait');    // 由于退出换账号，personal-info页只是隐藏
 			wainshow();
 			$.previewImage();
 		})
-	
 		window.addEventListener('personal-info',function(event){
 			plus.nativeUI.closeWaiting();
 			info();
-		})
+		});
 		function open(url) {
 			$.openWindow({
 				id: url,
@@ -216,23 +215,21 @@ mui.init();
 					    var btnArray = ['确定'];
 					    mui.confirm(' ','请在设置中允许使用相机',btnArray,function(e) {});
 					}
+					return;
 				}
-
 				var c = plus.camera.getCamera();
 				c.captureImage(function(e) {
 					plus.io.resolveLocalFileSystemURL(e, function(entry) {
 						var s = entry.toLocalURL() + "?version=" + new Date().getTime();
-//						console.log(s);
 						compressImage(s);
 					}, function(e) {
 						plus.nativeUI.alert("读取拍照文件错误");
 					});
 				}, function(s) {
-//					closeTime = new Date().getTime();
-//					longTime = closeTime - openTime;
-//					console.log(longTime);
+					closeTime = new Date().getTime();
+					longTime = closeTime - openTime;
 					if ( longTime <= 500 && s.code == 11) {
-						plus.nativeUI.alert('相机权限未开启');
+						plus.nativeUI.alert('请在权限管理中打开相机权限');
 					} else {
 						plus.nativeUI.toast('用户已取消拍照');
 					}
@@ -279,7 +276,6 @@ mui.init();
 			function compressImage(src){
 				plus.nativeUI.showWaiting();
 				plus.zip.compressImage({
-//					src:src,
 					src: '_doc/head.jpg',
 					dst:"_downloads/cm.jpg",
 					quality: 30,
@@ -322,8 +318,9 @@ mui.init();
 							if (upload.responseText.code == 0) {
 								localstorage.setItem('portrait', upload.responseText.data.portrait);
 								user_pic.src = upload.responseText.data.portrait;    
+								console.log(upload.responseText.data.portrait);
 								// 直接更换路径的话， 仅第一次有用， 压缩（ dst ）的图片的 imgPath 路径是一样的，
-								// overwrite = true表示，每次压缩的生成的img 都会被覆盖
+								// overwrite = true表示，每次压缩的生成的img 都会被覆盖   但是img会使用缓存  压缩之后使用时间戳
 								$.fire(plus.webview.getWebviewById('pages/tab-webview-subpage-setting.html'),'portrait',{});
 								mui.toast('上传成功');
 							} else {

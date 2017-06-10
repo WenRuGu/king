@@ -75,6 +75,7 @@
 			var convertor;					   // 坐标转换
 			var opts;
 			var pointArr = [];				   // 坐标转换数组
+			var t = null;					   // 一次性定时器
 			var network_flag = true;    	   // true 网络正常
 			var map_flag = false;	
 			var leo = true;
@@ -277,6 +278,7 @@
 				function again(zoom,m){ 		// 地图等级，附近范围
 					plus.geolocation.getCurrentPosition(function(r){
 						console.log('坐标  = '+JSON.stringify(r));
+						first = 0;
 						remove_overlay();
 						if ( r.coords.latitude == '5e-324') {
 							plus.nativeUI.alert('请在设置中开启定位权限');
@@ -298,30 +300,30 @@
 								convertor.translate(pointArr, 1, 5, function(data) {
 									my_point = data.points[0];
 									myMap(my_point, zoom, m, p, 0);
-								})
+								});
 							} else {
 								myMap(my_point, zoom, m, p, 0);
 							}
 						}
 					}, function(r){
-//						if ( r.code == 2 ) {
-//							map.centerAndZoom(new BMap.point(120.19,30.26), 12);
-							first++;
-							if ( first <= 2) {
-								if ( plus.os.name == 'Android' ) {
-									leo = false;
-									plus.nativeUI.alert('请在设置中允许获取当前位置信息', function() {},'确定');
-								} else if ( mui.os.ios ){
-									var CLLocationManager = plus.ios.import("CLLocationManager");
-									var status = CLLocationManager.authorizationStatus();
-									if ( 4 != status ) {
-										plus.nativeUI.alert('请在设置中允许获取当前位置信息', function() {},'确定');
-									}
+						map.centerAndZoom(new BMap.Point(116.404, 39.915), 12);
+						localstorage.setItem('lng', '116.404');	        // 经度
+						localstorage.setItem('lat', '39.915');	 	    // 维度
+						localstorage.setItem('distance', '5000');	  	  		// 范围
+						localstorage.setItem('zoom', '12');	
+						first++;
+						if ( first <= 2) {
+							if ( plus.os.name == 'Android' ) {
+								leo = false;
+								plus.nativeUI.alert('请在设置中允许获取当前位置信息', function() {},'提示','确定');
+							} else if ( mui.os.ios ){
+								var CLLocationManager = plus.ios.import("CLLocationManager");
+								var status = CLLocationManager.authorizationStatus();
+								if ( 4 != status ) {
+									plus.nativeUI.alert('请在设置中允许获取当前位置信息', function() {},'提示','确定');
 								}
-							} 
-//						} else {
-//							plus.nativeUI.alert('当前信号不稳定，无法获取位置信息');
-//						}
+							}
+						} 
 					},{
 						enableHighAccuracy: true,
 						provider: 'baidu'
@@ -340,7 +342,7 @@
 				window.addEventListener('charge-update', function(event) {     // login.js  和 booking-details页的更新
 					sel_scope.innerHTML == '附近' + event.detail.distance/1000 + '公里';
 					again( event.detail.zoom, event.detail.distance );
-				})
+				});
 				mui('.sel-ul').on('tap', 'li', function() {        //   选择附近范围
 					wainshow();
 					if ( !network_flag ) {
@@ -348,27 +350,41 @@
 						return;
 					}
 					sel_scope.innerHTML = this.innerHTML;
+					var zoom,dis;
 					if ( sel_scope.innerHTML == '附近5公里' ) {
-						again(12, 5 * 1000);
+						zoom = 12;
+						dis = 5;
 					} else if ( sel_scope.innerHTML == '附近10公里' ) {
-						again(11, 10 * 1000);
+						zoom = 11;
+						dis = 10;
 					} else if ( sel_scope.innerHTML == '附近50公里' ){
-						again(10, 50 * 1000);
+						zoom = 10;
+						dis = 50;
 					} else {
-						again(9, 0);
+						zoom = 9;
+						dis = 0;
+					}
+					if ( first != 0 ) {
+						map.setZoom(zoom);
+					} else {
+						again( oom, dis * 1000);
 					}
 					mui('.sel-ul')[0].style.display = 'none';
 					range_onOff = true;
+					clearTimeout(t);
 				});
 				sel_scope.addEventListener('tap', function() {		// 控制消失隐藏
 					if ( range_onOff ) {
 						mui('.sel-ul')[0].style.display = 'block';
 						range_onOff = false;
-						setTimeout(function() {
+						console.log('aa');
+						t = setTimeout(function() {
+							console.log('bb');
 							mui('.sel-ul')[0].style.display = 'none';
 							range_onOff = true;
-						}, 5 * 1000);
+						}, 5000);
 					} else {
+						clearTimeout(t);
 						mui('.sel-ul')[0].style.display = 'none';
 						range_onOff = true;
 					}

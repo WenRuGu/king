@@ -94,20 +94,20 @@
 			var slider = mui.os.ios ? mui('.mui-slider').slider() : null;
 			var s_group;
 			var token;
-			var sindex = 0;					  			// 页面div index
+			var sindex = 0;					  // 页面div index
 			var startX = 0;
 			var endX = 0;
-			var first_ajax = 0;				 			// 第一次请求 登录和 监听 fire，不重复请求
+			var first_ajax = 0;				  // 第一次请求 登录和 监听 fire，不重复请求
 			var pull_flag = true;
 			var w = document.documentElement.clientWidth || window.screen.width || localstorage.getItem('width');  // 有些页面 获取 宽度为0
-			var pull_all = [];				 			// 上拉下拉的 对象
+			var pull_all = [];				  // 上拉下拉的 对象
 			var _self;
 			var network_flag = true;  		  // true为有网络
-			var offset = [0,0,0,0];       	// 偏移量
-			var limit = 10;					        // 返回的记录数
+			var offset = [0,0,0,0];       	  // 偏移量
+			var limit = [10,10,10,10];        // 返回的记录数
 			var list_title = [];
 			var list_id = [];
-			var version = true;				  		// 安卓版本 > 5
+			var version = true;				  // 安卓版本 > 5
 			
 			function wainshow() {
 			    if (plus.networkinfo.getCurrentType() == plus.networkinfo.CONNECTION_NONE) {
@@ -121,14 +121,14 @@
 				deceleration:deceleration,
 				bounce: false
 			});
-			mui('.mui-btn-outlined').button('loading'); // 避免初始看见空白，有个加载效果
+			mui('.mui-btn-outlined').button('loading');    // 避免初始看见空白，有个加载效果
 			mui.plusReady(function() {
 				_self = plus.webview.currentWebview();
 				_self.setStyle({
 					scrollIndicator: 'none'
 				});
 				wainshow();
-				function toggle_style() {				  				// version <= 5 div动画的改变
+				function toggle_style() {				  // version <= 5 div动画的改变
 					s_group = document.querySelector('.mui-slider>div');
 					s_group.className = 'mui-slider-group';
 					for ( var i = 0; i < 4; i++ ) {
@@ -301,6 +301,47 @@
 		        	slider.gotoItem(sindex);
 //		        	console.log('触摸结束'+sindex);
 		        }
+				var createFragment = function( offsetnum, limitnum, test, index) {    //   index 值为  0，1,2,3
+					token = localstorage.getItem('token');
+					var categoryId = list_id[index];
+					var fragment = document.createDocumentFragment();
+					var li;
+					mui.ajax( mall_ip+'/api/v1/hdw/item/list',{
+						data:{
+							token: token,
+							categoryId: categoryId,
+							offset: offsetnum,
+							limit: limitnum
+						},
+						dataType:'json',
+						type:'post',
+						timeout:10000,          
+						success:function(data){
+//							console.log(JSON.stringify(data));
+							mui('.loading')[0].style.display = 'none';
+							if ( data.code == 0) {
+								var html = template('tmpl', data);
+								if ( test == 1 ) {
+									foods[index].innerHTML = '';
+									pull_all[index].refresh(true);
+								} else {
+									if ( data.data.length < 10 ) {
+										pull_all[index].endPullUpToRefresh(true);
+									}
+									mui.each(data.data, function() {
+										offset[index] = offset[index] + 1;
+									});
+								}
+								foods[index].innerHTML += html;
+								lazyImg.lazyLoad();
+							}
+						},
+						error:function(xhr,type,errorThrown){
+							plus.nativeUI.closeWaiting();
+//							console.log(type);
+						}
+					});
+				}
 				var ele = '.mui-slider-group .mui-scroll';
 				if ( !version ) {
 					ele = '.slider-group .mui-scroll';
@@ -318,10 +359,14 @@
 									slide.removeEventListener('swipeleft', swipeleft, false);
 									slide.removeEventListener('dragend', chdrag,false);			 // 自定义拖拽结束禁止右话
 								}
-								self.refresh(true);
-								offset[index] = 0;
 								setTimeout(function() {
-									createFragment(index); 
+									var down_len = 0;
+									if ( offset[index] >= 50 ) {
+										down_len = offset[index] = 50;
+									} else if ( offset[index] < 10 ) {
+										down_len = 10;
+									}
+									createFragment( 0, down_len, 1, index);  // offset limit up/down index;
 									self.endPullDownToRefresh();
 									if ( version ) {
 										slider.stopped = false;
@@ -346,7 +391,7 @@
 									slide.removeEventListener('dragend', chdrag,false);			// 自定义拖拽结束禁止右话
 								}
 								setTimeout(function() {
-									createFragment(index);
+									createFragment(offset[index],limit[index],2,index);
 									self.endPullUpToRefresh();
 									if ( version ) {
 										slider.stopped = false;
@@ -360,43 +405,6 @@
 						}
 					});
 				});
-				var createFragment = function(index) {    //   index 值为  0，1,2,3
-					token = localstorage.getItem('token');
-					var categoryId = list_id[index];
-					var fragment = document.createDocumentFragment();
-					var li;
-					mui.ajax( mall_ip+'/api/v1/hdw/item/list',{
-						data:{
-							token: token,
-							categoryId: categoryId,
-							offset: offset[index] * limit,
-							limit: limit
-						},
-						dataType:'json',
-						type:'post',
-						timeout:10000,          
-						success:function(data){
-//							console.log(JSON.stringify(data));
-							mui('.loading')[0].style.display = 'none';
-							if ( data.code == 0) {
-								if ( offset[index] == 0 ) {
-									foods[index].innerHTML = '';
-								}
-								offset[index]++;
-								if ( data.data.length < 10 ) {
-									pull_all[index].endPullUpToRefresh(true);
-								}
-								var html = template('tmpl', data);
-								foods[index].innerHTML += html;
-								lazyImg.lazyLoad();
-							}
-						},
-						error:function(xhr,type,errorThrown){
-							plus.nativeUI.closeWaiting();
-//							console.log(type);
-						}
-					});
-				}
 				function mall_list() {
 					list_title = JSON.parse(localstorage.getItem('mall-list-title'));
 					list_id = JSON.parse(localstorage.getItem('mall-list-id'));
@@ -412,13 +420,14 @@
 						} else {
 							plus.navigator.closeSplashscreen();
 						}
+
 						mui('.nav-list li').each(function(index) {
 							this.innerHTML = list_title[index];
 						});
 						setTimeout(function(){
 							first_ajax = 1;
 							for( var i = 0; i < 4; i++ ) {
-								createFragment(i);
+								createFragment( 0, 10, 2, i);
 							}
 						}, 2000);
 					}
@@ -436,6 +445,7 @@
 				}
 				window.addEventListener('quit-init-mall', function(event) {
 					offset = [0,0,0,0];
+					limit = [10,10,10,10];
 					for ( var i = 0; i < nav_li.length; i++ ) {  
 						mui('.mui-scroll-wrapper').scroll()[i].scrollTo(0,1,1);
 						foods[i].innerHTML = '';

@@ -263,7 +263,7 @@ mui.init();
 						console.log(payNum);
 						three_pay( payNum,charge_price,duration );
 					}
-				}, '',['确定','取消']);
+				}, '提示',['确定','取消']);
 			} else {
 				three_pay( payNum,charge_price,duration );
 			}
