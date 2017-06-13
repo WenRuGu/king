@@ -41,12 +41,14 @@
 		<script src="../js/style-size.js"></script>
 		<script type="text/javascript" charset="utf-8"> 
 			 //mui初始化
-			 mui.init();
+			 mui.init({
+				swipeBack:false
+			});
 			(function($, doc) {
 				function $c(id) {
 					return document.getElementsByClassName(id)[0];
 				}
-				
+				var localstorage = window.localStorage;
 				var sTime = new Date().getTime();
 				var endTime;
 				var scan_circle =$c('mui-tab-circle');
@@ -131,7 +133,7 @@
 						fire(id, title);
 					}
 					/*
-					 * 低端安卓机，点击切换太快，会发生堆栈溢出，导致页面切换与底部，头部文字不对应
+					 * 低端安卓机，点击切换太快，fire事件会导致堆栈溢出，导致页面切换与底部，头部文字不对应
 					 * */
 					$('.mui-bar-tab').on('tap', 'a', function(e) {
 						var that = this;
@@ -166,7 +168,6 @@
 						}
 					});
 				});
-			
 			}(mui, document))
 		</script>
 	</body>

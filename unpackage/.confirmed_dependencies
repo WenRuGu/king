@@ -22,7 +22,8 @@
       "js/sha1.js",
       "js/baiduMap.js",
       "css/iconfont.css",
-      "js/md5.js"
+      "js/md5.js",
+      "js/mui.js"
     ],
     "refer": [
       "pages/tab-webview-subpage-about.html",
@@ -892,7 +893,8 @@
       "js/mui.min.js",
       "css/mui.min.css",
       "fonts/mui.ttf"
-    ]
+    ],
+    "refer": []
   },
   "pages/open-box-1.html": {
     "resources": [
@@ -942,7 +944,8 @@
       "fonts/mui.ttf",
       "js/style-size.js",
       "css/mui.min.css"
-    ]
+    ],
+    "refer": []
   },
   "pages/mall-order.html": {
     "resources": [
@@ -994,7 +997,8 @@
       "js/mui.min.js",
       "js/style-size.js",
       "css/mui.min.css"
-    ]
+    ],
+    "refer": []
   },
   "pages/open-box-result.html": {
     "resources": [
@@ -1002,7 +1006,8 @@
       "js/style-size.js",
       "js/mui.min.js",
       "css/mui.min.css"
-    ]
+    ],
+    "refer": []
   },
   "pages/net-error.html": {
     "resources": [
@@ -1010,6 +1015,23 @@
       "img/no-network.png",
       "js/mui.min.js",
       "js/style-size.js"
+    ],
+    "refer": []
+  },
+  "index_main.html": {
+    "resources": [
+      "index.html",
+      "js/mui.min.js",
+      "fonts/mui.ttf",
+      "css/mui.min.css"
+    ],
+    "refer": [
+      "pages/tab-webview-subpage-setting.html",
+      "pages/tab-webview-subpage-mall.html",
+      "index.html",
+      "pages/tab-webview-subpage-order.html",
+      "pages/bottom-main.html",
+      "pages/tab-webview-subpage-charge.html"
     ]
   }
 }

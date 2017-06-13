@@ -363,7 +363,7 @@
 		disablePullupToRefresh: function() {
 			this.refresh();
 			this.pullUpTips.className = 'mui-pull-bottom-pocket' + ' ' + CLASS_HIDDEN;
-//			this.wrapper.removeEventListener('scrollbottom', this);
+			this.wrapper.removeEventListener('scrollbottom', this);		//   this
 		},
 		endPullUpToRefresh: function(finished) {
 //			console.log('停止上拉');

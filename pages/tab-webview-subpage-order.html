@@ -114,7 +114,9 @@
 		{{/each}}
 		</script>
 		<script>
-			mui.init();
+			mui.init({
+				swipeBack: false
+			});
 			(function($) {
 				var deceleration = mui.os.ios?0.0003:0.0006;
 				$('.mui-scroll-wrapper').scroll({

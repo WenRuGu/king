@@ -66,8 +66,7 @@
 					} else {
 						submit_btn.disabled = false;
 					}
-				})
-				
+				});
 				submit_btn.addEventListener('tap', function() {
 					token = localstorage.getItem('token');  
 					if ( txt.value == '' ) {
@@ -79,7 +78,7 @@
 							token: token,
 							content:txt.value
 					},function(data){
-						console.log(JSON.stringify(data));
+//						console.log(JSON.stringify(data));
 							if ( data.code == 0) {
 								setTimeout(function() {
 									plus.nativeUI.closeWaiting();

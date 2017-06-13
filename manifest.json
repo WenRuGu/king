@@ -7,7 +7,7 @@
 	"id": "Charge",
 	"name": "换电网",
 	"version": {
-		"name": "1.0.0",
+		"name": "1.0.1",
 		"code": "83"
 	},
 	"description": "",
@@ -254,7 +254,8 @@
 					"js/sha1.js",
 					"js/baiduMap.js",
 					"css/iconfont.css",
-					"js/md5.js"
+					"js/md5.js",
+					"js/mui.js"
 				],
 				"refer": [
 					"pages/tab-webview-subpage-chat.html",
@@ -1281,6 +1282,22 @@
 					"js/style-size.js"
 				],
 				"refer": [],
+				"priority": 0
+			},
+			"index_main.html": {
+				"resources": [
+					"index.html",
+					"js/mui.min.js",
+					"fonts/mui.ttf",
+					"css/mui.min.css"
+				],
+				"refer": [
+					"pages/tab-webview-subpage-setting.html",
+					"pages/tab-webview-subpage-mall.html",
+					"pages/tab-webview-subpage-order.html",
+					"pages/bottom-main.html",
+					"pages/tab-webview-subpage-charge.html"
+				],
 				"priority": 0
 			}
 		},

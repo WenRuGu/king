@@ -7,6 +7,11 @@
  * MUI核心JS
  * @type _L4.$|Function
  */
+
+/**
+ * 修改  注释4948和4952行
+ * 		4753 scrollTime 1000 为 400  可以自己设置时间，不用修改
+ */
 var mui = (function(document, undefined) {
 	var readyRE = /complete|loaded|interactive/;
 	var idSelectorRE = /^#([\w-]+)$/;

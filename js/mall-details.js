@@ -43,7 +43,6 @@ mui.init();
 			self = plus.webview.currentWebview();
 			
 			token = localstorage.getItem('token');
-//			console.log(token+','+self.goodsId);
 			function get_goods() {
 				$.post( mallde_ip +'/api/v1/hdw/item/detail',{
 						token:token,

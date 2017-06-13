@@ -173,11 +173,12 @@ body{
 }
 
 .map-point-local{
-	display: inline;
-	width: 1.25rem;
+	display: inline-block;
+	/*width: 1.25rem;*/
 	height: 0.5rem;
 	line-height: 0.5rem;
 	color: #888;
+	text-align: right;
 	margin-right: 0.2rem;
 	margin-top: 0.18rem;
 	background: url(../img/point-km.png) no-repeat 0 0.1rem;

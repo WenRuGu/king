@@ -1,4 +1,6 @@
-mui.init();
+mui.init({
+	swipeBack: false
+});
 
 (function($, doc){
 
@@ -47,7 +49,7 @@ mui.init();
 			userpic.setAttribute('data-src', localstorage.getItem('portrait'));
 			setTimeout(function() {
 				lazyImg.lazyLoad(true);
-			}, 2500);
+			}, 1500);
 		}
 		if ( network_flag ){
 			if ( localstorage.getItem('loginFlag') == 'true' ) {
@@ -61,9 +63,7 @@ mui.init();
 						},1000);
 					}
 				}
-				setTimeout(function(){
-					getSetting();
-				},1000)
+				getSetting();
 			}
 		} else {
 			if ( localstorage.getItem('loginFlag') == 'true' ) {
@@ -71,11 +71,8 @@ mui.init();
 			}
 		}
 		window.addEventListener('info',function(event) {	// 基础页之一，必须在main页ajax获取信息后，获取
-//			console.log('setting == info');
-			setTimeout(function() { 						// 页面load之前，监听不到事件触发
-				userpic.src = localstorage.getItem('portrait');
-				set_init();
-			},10);
+			userpic.src = localstorage.getItem('portrait');
+			set_init();
 		});
 		window.addEventListener('portrait', function(event) {   // personal-info页 修改头像
 			userpic.src = localstorage.getItem('portrait');
@@ -170,7 +167,7 @@ mui.init();
 						}
 				    }, 20);
 				}
-			}, '',['确认','取消']);
+			}, '提示',['确认','取消']);
 		});
 	});
 	function open(url) {

@@ -80,7 +80,9 @@
 			{{/each}}
 		</script>
 		<script>
-			mui.init();
+			mui.init({
+				swipeBack: false
+			});
 			var localstorage = window.localStorage; 
 			var mall_ip = localstorage.getItem('ip');
 			var foods = document.getElementsByClassName('foods');
@@ -493,7 +495,7 @@
 						goodsId: goodsId
 					}
 				});
-			})
+			});
 		</script>
 	</body>
 </html>

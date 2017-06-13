@@ -33,7 +33,7 @@
 				<p class="map-point-title">
 					<span class="map-point-title-b">{{item.cabinetName}}</span>
 					<a href="javascript:;" class="map-point-local mui-pull-right">
-						<span class="point-km"></span>
+						<!--<span class="point-km"></span>-->
 						<span class="km">{{item.distance | km: item.distance}}</span>
 					</a>
 				</p>
@@ -57,8 +57,10 @@
 			{{/each}}
 		</script>
 		<script>
+		mui.init({
+			swipeBack:false
+		});
 		(function($, doc) {
-			$.init();
 			var deceleration = mui.os.ios?0.003:0.0009;
 			$('.mui-scroll-wrapper').scroll({
 				bounce: false,
@@ -161,7 +163,7 @@
 						type:'post',
 						timeout:10000,
 						success:function(data){
-							console.log(JSON.stringify(data));
+//							console.log(JSON.stringify(data));
 							if ( data.code == 0 ) {
 								if ( pageNo == 0 ) {
 									map_info.innerHTML = '';
@@ -183,7 +185,7 @@
 				lng = event.detail.lng;
 				lat = event.detail.lat;
 				distance = event.detail.distance;
-				console.log('sub = '+lng+','+lat+','+distance);
+//				console.log('sub = '+lng+','+lat+','+distance);
 				pageNo = 0;     // 判断条件，也是每次 更新 附近信息
 				pageSize = 10;
 				function getPull() {
@@ -207,7 +209,7 @@
 						lng = localstorage.getItem('lng');
 						lat = localstorage.getItem('lat');
 						distance = localstorage.getItem('distance');
-						pull.pullUpLoading();
+						pull.pullDownLoading();
 					}
 				}
 				getPull();

@@ -39,8 +39,6 @@
 	<script src="../js/style-size.js"></script>
 	<script type="text/javascript">
 			mui.init();
-			var aaa = new Date().getTime();
-			var bbb;
 			var _self;
 			var charge_sub_style = {
 				top: '310px',						
@@ -167,8 +165,6 @@
 						});
 					});
 					map.addOverlay(marker);								// 地图添加坐标
-//					bbb = new Date().getTime();
-//					console.log('地图marker加载'+(bbb-aaa));
 				}
 				function addMarker2(point) {							// 添加用户的位置
 					var marker2 = new BMap.Marker(point,{ icon: my_icon});
@@ -188,15 +184,13 @@
 				})
 				function getPoint(lng,lat,distance) {					// 获取点的坐标
 					token = localstorage.getItem('token');
-//					console.log(lng+','+lat+','+distance+','+leo_ip);
 					mui.post(leo_ip  + '/api/v1/hdw/cabinet/nearest_position',{
 							lng:lng,
 							lat:lat,
 							distance: distance
 					},function(data){
-							console.log("getPoint == "+JSON.stringify(data));
+//							console.log("getPoint == "+JSON.stringify(data));
 							if ( data.code == 0 ) {
-								
 								mui.each( data.data,function(index, item) {
 									var point = new BMap.Point(item.lng, item.lat);
 									var icon;
@@ -228,7 +222,7 @@
 					getMap_flag();
 				}
 				function myMap(my_point, zoom, m, p, test) {
-					console.log(JSON.stringify(my_point) +','+test);
+//					console.log(JSON.stringify(my_point) +','+test);
 					getPoint(my_point.lng,my_point.lat,m);
 					addMarker2(my_point);
 					map.centerAndZoom(my_point, zoom);
@@ -326,16 +320,17 @@
 						} 
 					},{
 						enableHighAccuracy: true,
-						provider: 'baidu'
+						provider: 'baidu',
+						coordsType: 'bd09ll'
 					})
 				}
-				window.addEventListener('network', function(event){  // 网络恢复
+				window.addEventListener('network', function(event){ // 网络恢复
 					wainshow();
 					loadJScript();
 					var map_timer = setInterval(function(){
 						if ( map_flag ) {
 							clearInterval(map_timer);
-							again( 12, 5 * 1000);	     // 此处必须等 map load
+							again( 12, 5 * 1000);	     			// 此处必须等 map load
 						}
 					}, 50)
 				});
@@ -343,7 +338,7 @@
 					sel_scope.innerHTML == '附近' + event.detail.distance/1000 + '公里';
 					again( event.detail.zoom, event.detail.distance );
 				});
-				mui('.sel-ul').on('tap', 'li', function() {        //   选择附近范围
+				mui('.sel-ul').on('tap', 'li', function() {         //   选择附近范围
 					wainshow();
 					if ( !network_flag ) {
 						mui.toast('当前网络不给力，请稍后再试');
@@ -377,9 +372,7 @@
 					if ( range_onOff ) {
 						mui('.sel-ul')[0].style.display = 'block';
 						range_onOff = false;
-						console.log('aa');
-						t = setTimeout(function() {
-							console.log('bb');
+						t = setTimeout(function() {					// 5秒显示后消失
 							mui('.sel-ul')[0].style.display = 'none';
 							range_onOff = true;
 						}, 5000);

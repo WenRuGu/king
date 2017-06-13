@@ -101,6 +101,7 @@ mui.plusReady(function() {
 			plus.webview.show('pages/bottom-main.html');
 		}
 	}
+
 	function getAddress() {		// 获取默认地址
 		mui.ajax( main_ip+'/api/v1/basic/address_book/query_default',{
 			data:{
@@ -182,7 +183,7 @@ mui.plusReady(function() {
 				}
 				localstorage.setItem('allId',allId);
 			}
-			mui.fire(plus.webview.getWebviewById('pages/tab-webview-subpage-setting.html'),'info',{});
+			mui.fire(plus.webview.getWebviewById('pages/tab-webview-subpage-setting.html'),'info');
 		})
 	};
 	function getBalance(){
@@ -200,7 +201,7 @@ mui.plusReady(function() {
 	}
 	function getList(){
 		mui.get(main_ip+'/api/v1/hdw/item_category/list',{ token: token },function(data){
-			console.log(JSON.stringify(data));
+//			console.log(JSON.stringify(data));
 				if ( data.code == 0 ) {
 					var list_title = [];
 					var list_id = [];
@@ -284,8 +285,6 @@ mui.plusReady(function() {
 		if ( !ov || !nv || ov=="" || nv=="" ){
 			return false;
 		}
-		console.log(typeof ov);
-		console.log(typeof nv);
 		var b=false,
 		ova = ov.split(".",4),
 		nva = nv.split(".",4);
@@ -451,8 +450,16 @@ mui.plusReady(function() {
 			title.innerHTML = title_bar;
 			msg.style.display = 'none';
 		}
-//		console.log(activeTab+ ','+targetTab);
+//		var p = plus.webview.all();
+//		console.log(p.length);
+//		for(var i = 0; i < p.length; i++ ) {
+//			if ( i == 0 ) {
+//				console.log('重新开始== 1');
+//			}
+//			console.log(p[i].getURL());
+//		}
 		if ( network_flag ) {
+//			console.log(activeTab+','+targetTab);
 			if ( (mui.os.android && parseInt(plus.os.version) >= 5) || mui.os.ios ) { 
 				if(mui.os.ios||aniShow[targetTab]){
 					plus.webview.show(targetTab);
@@ -465,53 +472,60 @@ mui.plusReady(function() {
 			} else {
 				plus.webview.show(targetTab);
 			}
-			plus.webview.hide(activeTab); 
+			/**
+			 * 运用双首页，第二首页层级低于子页，故此全部hide
+			 * plus.webview.hide(activeTab);  采用这办法，小米手机会出现bug，快速切换，不能退出键无反应
+			 * */
+			if ( targetTab == 'pages/tab-webview-subpage-charge.html' ) {  
+				plus.webview.hide('pages/tab-webview-subpage-mall.html'); 	
+				plus.webview.hide('pages/tab-webview-subpage-order.html'); 	
+				plus.webview.hide('pages/tab-webview-subpage-setting.html'); 	
+			}
 			plus.webview.show('pages/bottom-main.html');
 			activeTab = targetTab;
 		} else {
 			console.log('aaaaa');
 			if (targetTab == 'pages/tab-webview-subpage-setting.html') {
 				plus.webview.show('pages/tab-webview-subpage-setting.html');
-				plus.webview.hide('pages/net-error.html');
+//				plus.webview.hide('pages/net-error.html');
 			} else {
 				plus.webview.show('pages/net-error.html');
 			}
 			activeTab = targetTab;
 		}
-	})
-	// 打开消息页
-	msg.addEventListener('tap',function(){
-		mui.openWindow({
-			url:"pages/news.html",
-			id: 'news.html',
-			styles: {
-				popGesture: 'close'
-			},
-			show:{
-				aniShow: 'pop-in'
-			},
-			waiting: {
-				autoShow: false
-			}
-		})
-	}) 
-
+	});
 	mui.oldBack = mui.back;
 	var backButtonPress = 0;
 	mui.back = function(event) {
 		backButtonPress++;
 		if (backButtonPress > 1) {
-			localstorage.setItem('token', null);  
+			localstorage.setItem('token', null);   
 			localstorage.setItem('sec-login', 'false');  // 退出应用，二次登录为false
 			// 退出清除当前token，避免 mall order token判断为已获取
 			// 并且，每次退出之后， token都会重新获取;
 			plus.runtime.quit();
 		} else {
-			plus.nativeUI.toast('再按一次退出应用');
+			mui.toast('再按一次退出应用');
 		}
 		setTimeout(function() {
 			backButtonPress = 0;
 		}, 2000);
 		return false;
 	};
+	// 打开消息页
+});
+msg.addEventListener('tap',function(){
+	mui.openWindow({
+		url:"pages/news.html",
+		id: 'news.html',
+		styles: {
+			popGesture: 'close'
+		},
+		show:{
+			aniShow: 'pop-in'
+		},
+		waiting: {
+			autoShow: false
+		}
+	})
 });
